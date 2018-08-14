@@ -18,6 +18,7 @@ IF (HAVE_ATOMSPACE)
 	ADD_SUBDIRECTORY (rule-engine)
 	ADD_SUBDIRECTORY (truthvalue)
 	ADD_SUBDIRECTORY (unify)
+	ADD_SUBDIRECTORY (das)
 ENDIF (HAVE_ATOMSPACE)
 
 # Extension language support
