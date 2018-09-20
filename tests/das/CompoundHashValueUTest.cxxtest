@@ -1,0 +1,122 @@
+#include <cxxtest/TestSuite.h>
+#include <cstdlib>
+#include <cstdio>
+#include <random>
+#include <thread>
+#include <vector>
+#include <string>
+#include "../../opencog/das/CompoundHashValue.h"
+
+using namespace opencog;
+using namespace std;
+
+
+class CompoundHashValueUTest : public CxxTest::TestSuite
+{
+
+private:
+ 
+    std::random_device rd;
+    std::mt19937 *mt;
+    std::uniform_int_distribution<unsigned int> *intRandomDist;
+    std::uniform_real_distribution<float> *floatRandomDist;
+    
+    unsigned int randUnsignedInt();
+    float randFloat();
+    unsigned int randUnsignedInt(unsigned int lowerBound, unsigned int upperBound);
+    float randFloat(float lowerBound, float upperBound);
+
+public:
+
+	CompoundHashValueUTest();
+	~CompoundHashValueUTest();
+
+	void setUp();
+	void tearDown();
+
+    void test_basics();
+    void test_invalid_state();
+};
+
+CompoundHashValueUTest::CompoundHashValueUTest()
+{
+    mt = new std::mt19937(rd());
+    intRandomDist = new std::uniform_int_distribution<unsigned int>(0, 10000000);
+    floatRandomDist = new std::uniform_real_distribution<float>(0, 1);
+}
+
+CompoundHashValueUTest::~CompoundHashValueUTest() {
+}
+
+void CompoundHashValueUTest::setUp()
+{
+}
+
+void CompoundHashValueUTest::tearDown() 
+{  
+}
+
+unsigned int CompoundHashValueUTest::randUnsignedInt()
+{
+    return (*intRandomDist)(*mt);
+}
+
+float CompoundHashValueUTest::randFloat()
+{
+    return (*floatRandomDist)(*mt);
+}
+
+unsigned int CompoundHashValueUTest::randUnsignedInt(unsigned int lowerBound, unsigned int upperBound)
+{
+    return lowerBound + (randUnsignedInt() % (upperBound - lowerBound + 1));
+}
+
+float CompoundHashValueUTest::randFloat(float lowerBound, float upperBound)
+{
+    float r = lowerBound + (randUnsignedInt() * (upperBound - lowerBound));
+    if (r > upperBound) return upperBound;
+    if (r < lowerBound) return lowerBound;
+    return r;
+}
+
+
+void CompoundHashValueUTest::test_basics()
+{
+    CompoundHashValue hv;
+
+    TS_ASSERT(hv.get() == CompoundHashValue::INVALID);
+    hv.feed((KBB_HASHCODE) 0);
+    TS_ASSERT(hv.get() != CompoundHashValue::INVALID);
+
+    hv.reset();
+    TS_ASSERT(hv.get() == CompoundHashValue::INVALID);
+    hv.feed((KBB_HASHCODE) -1);
+    TS_ASSERT(hv.get() != CompoundHashValue::INVALID);
+
+    hv.reset();
+    TS_ASSERT(hv.get() == CompoundHashValue::INVALID);
+    hv.feed((KBB_HASHCODE) 1);
+    TS_ASSERT(hv.get() != CompoundHashValue::INVALID);
+    hv.feed((KBB_HASHCODE) 1);
+    TS_ASSERT(hv.get() != CompoundHashValue::INVALID);
+
+    char s1[10] = "ola";
+    char s2[1] = "";
+    std::string s3 = "ola";
+
+    hv.feed(s1);
+    TS_ASSERT(hv.get() != CompoundHashValue::INVALID);
+    hv.feed(s2);
+    TS_ASSERT(hv.get() != CompoundHashValue::INVALID);
+    hv.feed(s3);
+    TS_ASSERT(hv.get() != CompoundHashValue::INVALID);
+}
+
+void CompoundHashValueUTest::test_invalid_state()
+{
+    CompoundHashValue hv;
+
+    for (unsigned int i = 0; i < 1000000000; i++) {
+        TS_ASSERT_THROWS_NOTHING(hv.feed((KBB_HASHCODE) i));
+    }
+}

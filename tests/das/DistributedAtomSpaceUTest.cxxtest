@@ -1,0 +1,87 @@
+#include <cxxtest/TestSuite.h>
+#include <cstdlib>
+#include <cstdio>
+#include <random>
+#include <thread>
+#include <vector>
+#include <string>
+#include "../../opencog/das/DistributedAtomSpace.h"
+
+using namespace opencog;
+using namespace std;
+
+class DistributedAtomSpaceUTest : public CxxTest::TestSuite
+{
+
+private:
+ 
+    std::random_device rd;
+    std::mt19937 *mt;
+    std::uniform_int_distribution<unsigned int> *intRandomDist;
+    std::uniform_real_distribution<float> *floatRandomDist;
+    
+    unsigned int randUnsignedInt();
+    float randFloat();
+    unsigned int randUnsignedInt(unsigned int lowerBound, unsigned int upperBound);
+    float randFloat(float lowerBound, float upperBound);
+
+public:
+
+	DistributedAtomSpaceUTest();
+	~DistributedAtomSpaceUTest();
+
+	void setUp();
+	void tearDown();
+
+    void test_basics();
+};
+
+DistributedAtomSpaceUTest::DistributedAtomSpaceUTest()
+{
+    mt = new std::mt19937(rd());
+    intRandomDist = new std::uniform_int_distribution<unsigned int>(0, 10);
+    floatRandomDist = new std::uniform_real_distribution<float>(0, 1);
+}
+
+DistributedAtomSpaceUTest::~DistributedAtomSpaceUTest() {
+}
+
+void DistributedAtomSpaceUTest::setUp()
+{
+}
+
+void DistributedAtomSpaceUTest::tearDown() 
+{  
+}
+
+unsigned int DistributedAtomSpaceUTest::randUnsignedInt()
+{
+    return (*intRandomDist)(*mt);
+}
+
+float DistributedAtomSpaceUTest::randFloat()
+{
+    return (*floatRandomDist)(*mt);
+}
+
+unsigned int DistributedAtomSpaceUTest::randUnsignedInt(unsigned int lowerBound, unsigned int upperBound)
+{
+    return lowerBound + (randUnsignedInt() % (upperBound - lowerBound + 1));
+}
+
+float DistributedAtomSpaceUTest::randFloat(float lowerBound, float upperBound)
+{
+    float r = lowerBound + (randUnsignedInt() * (upperBound - lowerBound));
+    if (r > upperBound) return upperBound;
+    if (r < lowerBound) return lowerBound;
+    return r;
+}
+
+
+void DistributedAtomSpaceUTest::test_basics()
+{
+    // CHECK RANDOM BOUNDS IN CONSTRUCTOR
+    DistributedAtomSpace *das = new DistributedAtomSpace();
+
+    delete das;
+}

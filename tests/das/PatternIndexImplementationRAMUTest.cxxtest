@@ -1,0 +1,148 @@
+#include <cxxtest/TestSuite.h>
+#include <cstdlib>
+#include <cstdio>
+#include <random>
+#include <thread>
+#include <vector>
+#include <string>
+#include "../../opencog/das/PatternIndex/PatternIndexImplementationRAM.h"
+
+using namespace opencog;
+using namespace std;
+
+class PatternIndexImplementationRAMUTest : public CxxTest::TestSuite
+{
+
+private:
+
+    
+    struct LessThan {
+        bool operator()(const KnowledgeBuildingBlock *a, const KnowledgeBuildingBlock *b) const {
+            for (unsigned short int i = 0; i < b->size(); i++) {
+                if (i >= a->size()) return true;
+                if (a->getTypeAt(i) < b->getTypeAt(i)) return true;
+                if (a->getTypeAt(i) > b->getTypeAt(i)) return false;
+                if (a->getArityAt(i) < b->getArityAt(i)) return true;
+                if (a->getArityAt(i) > b->getArityAt(i)) return false;
+            }
+            return false;
+        }
+    };
+
+    typedef std::list<UUID> UUIDList;
+    typedef std::map<KnowledgeBuildingBlock *, UUIDList *, LessThan> KBBUUIDMap;
+
+    std::random_device rd;
+    std::mt19937 *mt;
+    std::uniform_int_distribution<unsigned int> *intRandomDist;
+    std::uniform_real_distribution<float> *floatRandomDist;
+    
+    unsigned int randUnsignedInt();
+    float randFloat();
+    unsigned int randUnsignedInt(unsigned int lowerBound, unsigned int upperBound);
+    float randFloat(float lowerBound, float upperBound);
+
+    
+
+public:
+
+	PatternIndexImplementationRAMUTest();
+	~PatternIndexImplementationRAMUTest();
+
+	void setUp();
+	void tearDown();
+
+    void test_insertAndQuery();
+};
+
+PatternIndexImplementationRAMUTest::PatternIndexImplementationRAMUTest()
+{
+    mt = new std::mt19937(rd());
+    intRandomDist = new std::uniform_int_distribution<unsigned int>(0, 10000000);
+    floatRandomDist = new std::uniform_real_distribution<float>(0, 1);
+}
+
+PatternIndexImplementationRAMUTest::~PatternIndexImplementationRAMUTest() {
+}
+
+void PatternIndexImplementationRAMUTest::setUp()
+{
+}
+
+void PatternIndexImplementationRAMUTest::tearDown() 
+{  
+}
+
+unsigned int PatternIndexImplementationRAMUTest::randUnsignedInt()
+{
+    return (*intRandomDist)(*mt);
+}
+
+float PatternIndexImplementationRAMUTest::randFloat()
+{
+    return (*floatRandomDist)(*mt);
+}
+
+unsigned int PatternIndexImplementationRAMUTest::randUnsignedInt(unsigned int lowerBound, unsigned int upperBound)
+{
+    return lowerBound + (randUnsignedInt() % (upperBound - lowerBound + 1));
+}
+
+float PatternIndexImplementationRAMUTest::randFloat(float lowerBound, float upperBound)
+{
+    float r = lowerBound + (randUnsignedInt() * (upperBound - lowerBound));
+    if (r > upperBound) return upperBound;
+    if (r < lowerBound) return lowerBound;
+    return r;
+}
+
+void PatternIndexImplementationRAMUTest::test_insertAndQuery()
+{
+    unsigned int KBB_COUNT = 10000;
+    KnowledgeBuildingBlock* v[KBB_COUNT];
+
+    for (unsigned int maxkbbsize = 3; maxkbbsize < 10; maxkbbsize++) {
+        for (unsigned int maxtype = 3; maxtype < 10; maxtype++) {
+            for (unsigned int maxarity = 3; maxarity < 10; maxarity++) {
+                UUID uuid = 1;
+                KBBUUIDMap *checkIndex = new KBBUUIDMap();
+                PatternIndexImplementationRAM *index = new PatternIndexImplementationRAM();
+                for (unsigned int i = 0; i < KBB_COUNT; i++) {
+                    v[i] = new KnowledgeBuildingBlock();
+                    unsigned int kbbSize = randUnsignedInt(1, maxkbbsize);
+                    for (unsigned int j = 0; j < kbbSize; j++) {
+                        v[i]->pushBack(randUnsignedInt(1, maxtype), randUnsignedInt(1, maxarity), uuid++);
+                    }
+                    index->index(v[i], v[i]->getAtomIDAt(0));
+                    KBBUUIDMap::iterator it = checkIndex->find(v[i]);
+                    if (it == checkIndex->end()) {
+                        UUIDList *newList = new UUIDList();
+                        newList->push_back(v[i]->getAtomIDAt(0));
+                        checkIndex->emplace(v[i], newList);
+                    } else {
+                        (*it).second->push_back(v[i]->getAtomIDAt(0));
+                    }
+                }
+                std::list<UUID> *answer = new std::list<UUID>();
+                for (unsigned int i = 0; i < KBB_COUNT; i++) {
+                    index->query(*answer, v[i]);
+                    KBBUUIDMap::iterator it = checkIndex->find(v[i]);
+                    TS_ASSERT(it != checkIndex->end());
+                    TS_ASSERT_EQUALS((*it).second->size(), answer->size());
+                    std::list<UUID>::iterator it1 = (*it).second->begin();
+                    std::list<UUID>::iterator it2 = answer->begin();
+                    while (it1 != (*it).second->end()) {
+                        TS_ASSERT(*it1 == *it2);
+                        it1++;
+                        it2++;
+                    }
+                    answer->clear();
+                }
+                delete answer;
+                delete checkIndex;
+                delete index;
+                for (unsigned int i = 0; i < KBB_COUNT; i++) delete v[i];
+            }
+        }
+    }
+}

@@ -24,6 +24,7 @@ IF (CXXTEST_FOUND)
 	ADD_SUBDIRECTORY (unify)
 	ADD_SUBDIRECTORY (atomspaceutils)
 	ADD_SUBDIRECTORY (attentionbank)
+	ADD_SUBDIRECTORY (das)
 
 	# Persistence is for saving/restoring atomspace to disk.
 	ADD_SUBDIRECTORY (persist)

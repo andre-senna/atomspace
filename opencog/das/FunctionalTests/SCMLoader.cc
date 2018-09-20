@@ -1,20 +1,21 @@
 #include "SCMLoader.h"
-//#include <opencog/guile/SchemeEval.h>
+#include <opencog/guile/SchemeEval.h>
 #include <opencog/util/Logger.h>
 
 
 using namespace opencog;
+using namespace std;
 
-bool SCMLoader::load(const std::string &fileName, 
-                     AtomSpace &atomSpace, 
+bool SCMLoader::load(const string &fileName, 
+                     AtomSpace *atomSpace, 
                      SCMLoaderCallback *listener)
 {
     bool exitValue = false;
 
     logger().set_sync_flag(true);
-    std::fstream fin(fileName, std::fstream::in);
+    fstream fin(fileName, fstream::in);
     if (fin.good()) {
-        std::ifstream fcount(fileName, std::ios::binary | std::ios::ate);
+        ifstream fcount(fileName, ios::binary | ios::ate);
         // Just to provide log message with % done
         int fileSize = fcount.tellg();
         fcount.close();
@@ -31,22 +32,22 @@ bool SCMLoader::load(const std::string &fileName,
     return exitValue;
 }
 
-void SCMLoader::parseFile(std::fstream &fin, 
-                          AtomSpace &atomSpace, 
+void SCMLoader::parseFile(fstream &fin, 
+                          AtomSpace *atomSpace, 
                           int inputFileSize, 
                           SCMLoaderCallback *listener)
 {
-    //SchemeEval *schemeEval = SchemeEval::get_evaluator(&atomSpace);
+    SchemeEval *schemeEval = SchemeEval::get_evaluator(atomSpace);
     int percentDone = 0;
     int inputFileCharCount = 0;
     int level = 0;
     bool inNodeName = false;
     bool inComment = false;
     char c;
-    std::string line = "";
-    //std::string output1 = schemeEval->eval("(count-all)");
-    //logger().info("[PatternIndex] Atom count before loading: %s", output1.c_str());
-    while (fin >> std::noskipws >> c) {
+    string line = "";
+    string output1 = schemeEval->eval("(count-all)");
+    logger().info("[PatternIndex] Atom count before loading: %s", output1.c_str());
+    while (fin >> noskipws >> c) {
         inputFileCharCount++;
         if (c == '\n') {
             if (inputFileSize > 0) {
@@ -72,7 +73,8 @@ void SCMLoader::parseFile(std::fstream &fin,
                         if (c == ')') {
                             if (--level == 0) {
                                 if (listener != NULL) listener->beforeInserting(line);
-                                //schemeEval->eval(line);
+                                Handle h = schemeEval->eval_h(line);
+                                if (listener != NULL) listener->afterInserting(h);
                                 line = "";
                             }
                         }
@@ -81,6 +83,6 @@ void SCMLoader::parseFile(std::fstream &fin,
             }
         }
     }
-    //std::string output2 = schemeEval->eval("(count-all)");
-    //logger().info("[PatternIndex] Atom count after loading: %s", output2.c_str());
+    string output2 = schemeEval->eval("(count-all)");
+    logger().info("[PatternIndex] Atom count after loading: %s", output2.c_str());
 }

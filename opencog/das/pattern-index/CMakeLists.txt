@@ -1,6 +1,5 @@
 ADD_LIBRARY (patternindex SHARED
-	PatternIndexAPI
-	PatternIndexSCM
+	PatternIndex
 	TypeFrameIndex
 	TypeFrameIndexBuilder
 	PatternHeap
@@ -44,7 +43,7 @@ INSTALL (FILES
 	TypeFrame.h
 	TypeFrameIndex.h
 	TypeFrameIndexBuilder.h
-	DESTINATION "include/${PROJECT_NAME}/learning/pattern-index"
+	DESTINATION "include/opencog/das/patternIndex"
 )
 
 INSTALL (TARGETS patternindex DESTINATION "lib${LIB_DIR_SUFFIX}/opencog")
