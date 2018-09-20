@@ -1,10 +1,12 @@
 ADD_SUBDIRECTORY (PatternIndex)
-ADD_SUBDIRECTORY (FunctionalTests)
+ADD_SUBDIRECTORY (IntegrationTests)
 
 ADD_LIBRARY (das SHARED
 	DistributedAtomSpace
 	CacheManager
 	CompoundHashValue
+	PatternIndexSCMBuilder
+	SCMLoader
 	utils
 )
 

@@ -19,27 +19,22 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef _OPENCOG_CACHEMANAGER_H
-#define _OPENCOG_CACHEMANAGER_H
+#include "../DistributedAtomSpace.h"
 
-namespace opencog
-{
+using namespace opencog;
+using namespace std;
 
-/**
- *
- */
-class CacheManager 
-{
+int main(int argc, char *argv[]) {
 
-public:
+    int exitValue = 0;
 
-    CacheManager();
-    ~CacheManager();
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <SCM file>\n", argv[0]);
+        exitValue = 1;
+    } else {
+        DistributedAtomSpace das;
+        das.loadSCM(argv[1]);
+    }
 
-private:
-
-};
-
+    return exitValue;
 }
-
-#endif // _OPENCOG_CACHEMANAGER_H

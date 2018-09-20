@@ -29,8 +29,8 @@
 #include <opencog/util/Config.h>
 
 #include "../PatternIndex/PatternIndex.h"
-#include "PatternIndexBuilder.h"
-#include "SCMLoader.h"
+#include "../PatternIndexSCMBuilder.h"
+#include "../SCMLoader.h"
 
 using namespace opencog;
 using namespace std;
@@ -41,7 +41,7 @@ static AtomSpace *atomSpace;
 void createIndex(const string &scmPath)
 {
 
-    PatternIndexBuilder builder(patternIndex);
+    PatternIndexSCMBuilder builder(patternIndex);
 
     if (SCMLoader::load(scmPath, atomSpace, &builder)) {
         string m = "Error creating PatternIndex. SCM file is invalid.\n";

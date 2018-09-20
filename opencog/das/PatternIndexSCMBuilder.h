@@ -1,6 +1,4 @@
 /*
- * TypeFrameIndexBuilder.h
- *
  * Copyright (C) 2017 OpenCog Foundation
  *
  * Author: Andre Senna <https://github.com/andre-senna>
@@ -25,19 +23,19 @@
 #define _OPENCOG_PATTERNINDEXBUILDER_H
 
 #include "SCMLoaderCallback.h"
-#include "../PatternIndex/PatternIndex.h"
-#include "../CompoundHashValue.h"
+#include "PatternIndex/PatternIndex.h"
+#include "CompoundHashValue.h"
 
 namespace opencog
 {
 
-class PatternIndexBuilder : public SCMLoaderCallback
+class PatternIndexSCMBuilder : public SCMLoaderCallback
 {
 
 public:
 
-    PatternIndexBuilder(PatternIndex *index);
-    ~PatternIndexBuilder();
+    PatternIndexSCMBuilder(PatternIndex *index);
+    ~PatternIndexSCMBuilder();
 
     bool DEBUG;
 

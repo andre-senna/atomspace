@@ -1,30 +1,30 @@
-#include "PatternIndexBuilder.h"
+#include "PatternIndexSCMBuilder.h"
 #include <opencog/util/Logger.h>
 #include <stdexcept>
 
 using namespace opencog;
 using namespace std;
 
-PatternIndexBuilder::PatternIndexBuilder(PatternIndex *index)
+PatternIndexSCMBuilder::PatternIndexSCMBuilder(PatternIndex *index)
 {
     DEBUG = true;
     this->index = index;
 }
 
-PatternIndexBuilder::~PatternIndexBuilder() 
+PatternIndexSCMBuilder::~PatternIndexSCMBuilder() 
 {
 }
 
-void PatternIndexBuilder::beforeInserting(const std::string &schemeStr)
+void PatternIndexSCMBuilder::beforeInserting(const std::string &schemeStr)
 {
     parseSCMFragment(schemeStr);
 }
 
-void PatternIndexBuilder::afterInserting(const Handle &toplevelAtom)
+void PatternIndexSCMBuilder::afterInserting(const Handle &toplevelAtom)
 {
 }
 
-void PatternIndexBuilder::parseSCMFragment(const std::string &str)
+void PatternIndexSCMBuilder::parseSCMFragment(const std::string &str)
 {
     //if (DEBUG) printf("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789\n");
     if (DEBUG) printf("%s\n", str.c_str());
@@ -41,7 +41,7 @@ void PatternIndexBuilder::parseSCMFragment(const std::string &str)
 }
 
 
-int PatternIndexBuilder::countTargets(const string &txt, unsigned int begin)
+int PatternIndexSCMBuilder::countTargets(const string &txt, unsigned int begin)
 {
     int answer = 0;
     unsigned int cursor = begin;
@@ -69,7 +69,7 @@ int PatternIndexBuilder::countTargets(const string &txt, unsigned int begin)
     }
 }
 
-int PatternIndexBuilder::recursiveParse(const string &txt, 
+int PatternIndexSCMBuilder::recursiveParse(const string &txt, 
                                         KnowledgeBuildingBlock &kbb, 
                                         CompoundHashValue &kbbHashValue,
                                         unsigned int begin)

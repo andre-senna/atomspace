@@ -1,6 +1,4 @@
 /*
- * PatternIndexImplementationRAM.h
- *
  * Copyright (C) 2017 OpenCog Foundation
  *
  * Author: Andre Senna <https://github.com/andre-senna>

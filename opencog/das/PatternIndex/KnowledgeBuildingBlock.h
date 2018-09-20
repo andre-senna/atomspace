@@ -1,6 +1,4 @@
 /*
- * KnowledgeBuildingBlock.h
- *
  * Copyright (C) 2017 OpenCog Foundation
  *
  * Author: Andre Senna <https://github.com/andre-senna>
@@ -41,7 +39,7 @@ class KnowledgeBuildingBlock
 
 // uses "package" visible methods (see below)
 friend class PatternIndexImplementationRAM;
-friend class PatternIndexBuilder;
+friend class PatternIndexSCMBuilder;
 friend class ::PatternIndexImplementationRAMUTest;
 
 private:

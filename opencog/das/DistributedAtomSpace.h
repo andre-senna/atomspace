@@ -1,6 +1,4 @@
 /*
- * DistributedAtomSpace.h
- *
  * Copyright (C) 2017 OpenCog Foundation
  *
  * Author: Andre Senna <https://github.com/andre-senna>
@@ -27,6 +25,7 @@
 #include <opencog/atomspace/AtomSpace.h>
 #include "PatternIndex/PatternIndex.h"
 #include "CacheManager.h"
+#include <string>
 
 namespace opencog
 {
@@ -45,6 +44,8 @@ public:
     DistributedAtomSpace();
     ~DistributedAtomSpace();
 
+    void loadSCM(const std::string &fileName);
+
     // Prevent accidental copies
     // It's public to provide better error messages
     DistributedAtomSpace(const DistributedAtomSpace&) = delete;
@@ -52,10 +53,10 @@ public:
 
 private:
 
-    PatternIndex* _globalPatternIndex;
-    PatternIndex* _localPatternIndex;
-    CacheManager* _cacheManager;
-    AtomSpace* _atomSpace;
+    PatternIndex* globalPatternIndex;
+    PatternIndex* localPatternIndex;
+    CacheManager* cacheManager;
+    AtomSpace* atomSpace;
 
 };
 

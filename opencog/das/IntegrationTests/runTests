@@ -1,0 +1,2 @@
+./opencog/das/IntegrationTests/checkKBBs ../opencog/das/IntegrationTests/data/QueryToyExample.scm > /tmp/checkKBBs.output
+diff /tmp/checkKBBs.output ../opencog/das/IntegrationTests/baselines/checkKBBs.txt
