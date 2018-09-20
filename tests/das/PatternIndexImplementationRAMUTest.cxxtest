@@ -14,7 +14,6 @@ class PatternIndexImplementationRAMUTest : public CxxTest::TestSuite
 {
 
 private:
-
     
     struct LessThan {
         bool operator()(const KnowledgeBuildingBlock *a, const KnowledgeBuildingBlock *b) const {
@@ -41,8 +40,6 @@ private:
     float randFloat();
     unsigned int randUnsignedInt(unsigned int lowerBound, unsigned int upperBound);
     float randFloat(float lowerBound, float upperBound);
-
-    
 
 public:
 
