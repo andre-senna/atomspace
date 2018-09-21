@@ -26,6 +26,8 @@ namespace opencog
 {
 
     typedef unsigned long int KBB_HASHCODE;
+    typedef unsigned long int KBB_UUID;
+    typedef unsigned long int KBB_DBID;
 
 }
 

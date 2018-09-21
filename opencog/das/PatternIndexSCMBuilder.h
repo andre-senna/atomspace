@@ -46,6 +46,8 @@ public:
 private:
 
     PatternIndex *index;
+    KnowledgeBuildingBlock kbb;
+    CompoundHashValue kbbHashValue;
 
     void parseSCMFragment(const std::string &str);
     int countTargets(const std::string &txt, unsigned int begin);

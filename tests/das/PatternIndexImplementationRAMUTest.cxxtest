@@ -28,8 +28,8 @@ private:
         }
     };
 
-    typedef std::list<UUID> UUIDList;
-    typedef std::map<KnowledgeBuildingBlock *, UUIDList *, LessThan> KBBUUIDMap;
+    typedef std::list<KBBReference> ReferenceList;
+    typedef std::map<KnowledgeBuildingBlock *, ReferenceList *, LessThan> KBBUUIDMap;
 
     std::random_device rd;
     std::mt19937 *mt;
@@ -97,37 +97,40 @@ void PatternIndexImplementationRAMUTest::test_insertAndQuery()
 {
     unsigned int KBB_COUNT = 10000;
     KnowledgeBuildingBlock* v[KBB_COUNT];
+    KBBReference nextHandle;
+    nextHandle.uuid = 1;
 
     for (unsigned int maxkbbsize = 3; maxkbbsize < 10; maxkbbsize++) {
         for (unsigned int maxtype = 3; maxtype < 10; maxtype++) {
             for (unsigned int maxarity = 3; maxarity < 10; maxarity++) {
-                UUID uuid = 1;
+                UUID hash = 1;
                 KBBUUIDMap *checkIndex = new KBBUUIDMap();
                 PatternIndexImplementationRAM *index = new PatternIndexImplementationRAM();
                 for (unsigned int i = 0; i < KBB_COUNT; i++) {
                     v[i] = new KnowledgeBuildingBlock();
                     unsigned int kbbSize = randUnsignedInt(1, maxkbbsize);
                     for (unsigned int j = 0; j < kbbSize; j++) {
-                        v[i]->pushBack(randUnsignedInt(1, maxtype), randUnsignedInt(1, maxarity), uuid++);
+                        v[i]->pushBack(randUnsignedInt(1, maxtype), randUnsignedInt(1, maxarity), hash++);
                     }
-                    index->index(v[i], v[i]->getAtomIDAt(0));
-                    KBBUUIDMap::iterator it = checkIndex->find(v[i]);
+                    index->index(v[i], nextHandle);
+                    auto it = checkIndex->find(v[i]);
                     if (it == checkIndex->end()) {
-                        UUIDList *newList = new UUIDList();
-                        newList->push_back(v[i]->getAtomIDAt(0));
+                        ReferenceList *newList = new ReferenceList();
+                        newList->push_back(nextHandle);
                         checkIndex->emplace(v[i], newList);
                     } else {
-                        (*it).second->push_back(v[i]->getAtomIDAt(0));
+                        (*it).second->push_back(nextHandle);
                     }
+                    nextHandle.uuid++;
                 }
-                std::list<UUID> *answer = new std::list<UUID>();
+                std::list<KBBReference> *answer = new std::list<KBBReference>();
                 for (unsigned int i = 0; i < KBB_COUNT; i++) {
                     index->query(*answer, v[i]);
-                    KBBUUIDMap::iterator it = checkIndex->find(v[i]);
+                    auto it = checkIndex->find(v[i]);
                     TS_ASSERT(it != checkIndex->end());
                     TS_ASSERT_EQUALS((*it).second->size(), answer->size());
-                    std::list<UUID>::iterator it1 = (*it).second->begin();
-                    std::list<UUID>::iterator it2 = answer->begin();
+                    auto it1 = (*it).second->begin();
+                    auto it2 = answer->begin();
                     while (it1 != (*it).second->end()) {
                         TS_ASSERT(*it1 == *it2);
                         it1++;

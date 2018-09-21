@@ -22,6 +22,10 @@ void PatternIndexSCMBuilder::beforeInserting(const std::string &schemeStr)
 
 void PatternIndexSCMBuilder::afterInserting(const Handle &toplevelAtom)
 {
+    KBBReference reference;
+    reference.handle = &toplevelAtom;
+    index->index(&kbb, reference);
+    if (DEBUG) kbb.printForDebug("Indexed KBB: ", "\n");
 }
 
 void PatternIndexSCMBuilder::parseSCMFragment(const std::string &str)
@@ -29,15 +33,11 @@ void PatternIndexSCMBuilder::parseSCMFragment(const std::string &str)
     //if (DEBUG) printf("0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789\n");
     if (DEBUG) printf("%s\n", str.c_str());
 
-    KnowledgeBuildingBlock kbb;
-    CompoundHashValue kbbHashValue;
-
+    kbb.clear();
+    kbbHashValue.reset();
     if (recursiveParse(str, kbb, kbbHashValue, 0) < 0) {
         throw runtime_error("Parse error\n");
     }
-
-    index->index(&kbb, kbbHashValue.get());
-    if (DEBUG) kbb.printForDebug("Indexed KBB: ", "\n");
 }
 
 

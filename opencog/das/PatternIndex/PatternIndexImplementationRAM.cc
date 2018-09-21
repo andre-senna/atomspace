@@ -6,7 +6,7 @@ using namespace std;
 
 PatternIndexImplementationRAM::PatternIndexImplementationRAM() 
 {
-    _nextKBBID = 1;
+    nextKBBID = 1;
 }
 
 PatternIndexImplementationRAM::~PatternIndexImplementationRAM() 
@@ -18,7 +18,7 @@ PatternIndexImplementationRAM::~PatternIndexImplementationRAM()
 
 // TODO Add subpatterns as well
 void PatternIndexImplementationRAM::index(KnowledgeBuildingBlock *kbb, 
-                                          KBB_HASHCODE toplevelAtomID)
+                                          KBBReference &kbbReference)
 {
 
     unsigned short int size = kbb->size();
@@ -36,7 +36,7 @@ void PatternIndexImplementationRAM::index(KnowledgeBuildingBlock *kbb,
     // occurrence is added.
 
     unsigned short int kbbCursor = 0;
-    IndexNode *node = &_root;
+    IndexNode *node = &root;
     IndexNode::IndexLinkTag tag;
 
     while (kbbCursor < size) {
@@ -59,17 +59,17 @@ void PatternIndexImplementationRAM::index(KnowledgeBuildingBlock *kbb,
     // At this point, node is pointing to the proper leaf, which can be a newly
     // created one. In this case, a new KBB ID need to be assigned to this leaf
     if (node->kbbID == 0) {
-        node->kbbID = _nextKBBID++;
+        node->kbbID = nextKBBID++;
     }
 
     // Actually inserts the new occurrence of the passed KBB
-    insertKBBOccurrence(node->kbbID, toplevelAtomID);
+    insertKBBOccurrence(kbbReference, node->kbbID);
     #ifdef __DEBUG
         printf("New KBB indexed\n");
     #endif
 }
 
-void PatternIndexImplementationRAM::query(list<KBB_HASHCODE> &answer, KnowledgeBuildingBlock *key)
+void PatternIndexImplementationRAM::query(list<KBBReference> &answer, KnowledgeBuildingBlock *key)
 {
     unsigned short int size = key->size();
     if (size == 0) {
@@ -81,7 +81,7 @@ void PatternIndexImplementationRAM::query(list<KBB_HASHCODE> &answer, KnowledgeB
     // passed KBB.
 
     unsigned short int kbbCursor = 0;
-    IndexNode *node = &_root;
+    IndexNode *node = &root;
     IndexNode::IndexLinkTag tag;
 
     while (kbbCursor < size) {
@@ -99,8 +99,8 @@ void PatternIndexImplementationRAM::query(list<KBB_HASHCODE> &answer, KnowledgeB
 
     // At this point, node is pointing to the corresponding leaf.
    
-    TestContainer::iterator it = _occurrences.find(node->kbbID);
-    if (it == _occurrences.end()) {
+    auto it = occurrences.find(node->kbbID);
+    if (it == occurrences.end()) {
         throw runtime_error("Mapping not found");
     }
 
@@ -114,16 +114,16 @@ void PatternIndexImplementationRAM::query(list<KBB_HASHCODE> &answer, KnowledgeB
 // --------------------------------------------------------------------------------
 // Private methods
 
-void PatternIndexImplementationRAM::insertKBBOccurrence(unsigned int kbbID, 
-                                                        KBB_HASHCODE toplevelAtomID)
+void PatternIndexImplementationRAM::insertKBBOccurrence(KBBReference &kbbReference,
+                                                        KBB_DBID &kbbID)
 {
-    TestContainer::iterator it = _occurrences.find(kbbID);
-    if (it == _occurrences.end()) {
-        list<KBB_HASHCODE> *newList = new list<KBB_HASHCODE>();
-        newList->push_back(toplevelAtomID);
-        _occurrences.emplace(kbbID, newList);
+    auto it = occurrences.find(kbbID);
+    if (it == occurrences.end()) {
+        list<KBBReference> *newList = new list<KBBReference>();
+        newList->push_back(kbbReference);
+        occurrences.emplace(kbbID, newList);
     } else {
-        (*it).second->push_back(toplevelAtomID);
+        (*it).second->push_back(kbbReference);
     }
 }
 

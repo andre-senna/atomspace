@@ -80,6 +80,7 @@ public:
     ~KnowledgeBuildingBlock();
 
     inline unsigned short int size() const { return definition.size(); }
+    inline void clear() { definition.clear(); }
 
     void printForDebug(const std::string &prefix, const std::string &sufix);
 
