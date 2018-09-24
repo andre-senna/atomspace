@@ -8,6 +8,7 @@ TARGET_LINK_LIBRARIES(DistributedAtomSpaceUTest
 
 ADD_CXXTEST(PatternIndexImplementationRAMUTest)
 TARGET_LINK_LIBRARIES(PatternIndexImplementationRAMUTest
+	das
 	patternindex
 	smob
 	atomspace

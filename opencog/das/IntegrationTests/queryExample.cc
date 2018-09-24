@@ -1,6 +1,4 @@
 /*
- * queryExample.cc
- *
  * Copyright (C) 2017 OpenCog Foundation
  *
  * Author: Andre Senna <https://github.com/andre-senna>
@@ -21,116 +19,33 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <chrono>
-
-#include <opencog/guile/SchemeEval.h>
-#include <opencog/atomspace/AtomSpace.h>
-#include <opencog/atoms/base/Handle.h>
-#include <opencog/util/Config.h>
-
-#include "../PatternIndex/PatternIndex.h"
-#include "../PatternIndexSCMBuilder.h"
-#include "../SCMLoader.h"
+#include "../DistributedAtomSpace.h"
 
 using namespace opencog;
 using namespace std;
 
-static PatternIndex *patternIndex;
-static AtomSpace *atomSpace;
-
-void createIndex(const string &scmPath)
-{
-
-    PatternIndexSCMBuilder builder(patternIndex);
-
-    if (SCMLoader::load(scmPath, atomSpace, &builder)) {
-        string m = "Error creating PatternIndex. SCM file is invalid.\n";
-        throw runtime_error(m);
-    }
-}
-
 int main(int argc, char *argv[]) {
 
-    int exitValue = 0;
-
-    if (argc != 3) {
-        fprintf(stderr, "Usage: %s <SCM file> <config file>\n", argv[0]);
-        exitValue = 1;
-    } else {
-
-        // Load configuration file
-        config().load(argv[2]);
-
-
-        // AtomSpace setup
-        atomSpace = new AtomSpace();
-        SchemeEval::init_scheme();
-        SchemeEval::set_scheme_as(atomSpace);
-        //SchemeEval *schemeEval = new SchemeEval(atomSpace);
-        
-        // Create a new index given a SCM file
-        patternIndex = PatternIndex::factory();
-        createIndex(argv[1]);
-        printf("Index created\n");
-
-/*
-
-        // Query
-        std::string queryStr1 = "(AndLink\
-                                   (SimilarityLink\
-                                     (VariableNode \"X\")\
-                                     (VariableNode \"Y\")\
-                                   )\
-                                   (SimilarityLink\
-                                     (VariableNode \"Y\")\
-                                     (VariableNode \"Z\")\
-                                   )\
-                                 )";
-        Handle queryHandle = schemeEval->eval_h(queryStr1);
-        Handle resultHandle = patternindex().query(indexKey, queryHandle);
-        printf("Query 1:\n");
-        printf("Result: %s", resultHandle->to_string().c_str());
-
-        //
-        // optionally, query() may be called passing the SCM string
-        //
-
-        std::string queryStr2 = "(AndLink\
-                                   (SimilarityLink\
-                                     (VariableNode \"X\")\
-                                     (VariableNode \"Y\")\
-                                   )\
-                                   (NotLink\
-                                     (AndLink\
-                                       (InheritanceLink\
-                                         (VariableNode \"X\")\
-                                         (VariableNode \"Z\")\
-                                       )\
-                                       (InheritanceLink\
-                                         (VariableNode \"Y\")\
-                                         (VariableNode \"Z\")\
-                                       )\
-                                     )\
-                                   )\
-                                 )";
-        std::vector<PatternIndexAPI::QueryResult> queryResults;
-        patternindex().query(queryResults, indexKey, queryStr2);
-        printf("\n\nQuery 2:\n");
-        printf("%zu results\n", queryResults.size());
-        for (unsigned int i = 0; i < queryResults.size(); i++) {
-            printf("Result #%u:\n\n", i + 1);
-            for (const Handle& result : queryResults.at(i).first) {
-                printf("%s\n", result->to_string().c_str());
-            }
-            printf("Mapping:\n\n");
-            for (const auto& vargnd : queryResults.at(i).second) {
-                printf("%s%s\n", 
-                       vargnd.first->to_string().c_str(),
-                       vargnd.second->to_string().c_str());
-            }
-        }
-*/
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <SCM file>\n", argv[0]);
+        return 1;
     }
 
-    return exitValue;
+    DistributedAtomSpace das;
+    das.loadSCM(argv[1]);
+
+    std::string queryStr1 = "(AndLink\
+                               (SimilarityLink\
+                                 (VariableNode \"X\")\
+                                 (VariableNode \"Y\")\
+                               )\
+                               (SimilarityLink\
+                                 (VariableNode \"Y\")\
+                                 (VariableNode \"Z\")\
+                               )\
+                             )";
+
+    KnowledgeBuildingBlock pattern1;
+
+    return 0;
 }

@@ -25,6 +25,7 @@
 #include <string>
 #include <opencog/atoms/base/Atom.h>
 #include "../utils.h"
+#include "../CompoundHashValue.h"
 
 class PatternIndexImplementationRAMUTest; // to declare as friend (see below)
 
@@ -55,6 +56,11 @@ private:
     std::vector<KBBElement> definition;
 
 
+    int countTargets(const std::string &txt, unsigned int begin);
+    int recursiveParse(const std::string &txt,
+                       CompoundHashValue &kbbHashValue,
+                       unsigned int begin);
+
     // "package" visibility
     // the following methods are accesed by "friend" classes 
 
@@ -81,6 +87,8 @@ public:
 
     inline unsigned short int size() const { return definition.size(); }
     inline void clear() { definition.clear(); }
+
+    void parseSCM(const std::string &str);
 
     void printForDebug(const std::string &prefix, const std::string &sufix);
 

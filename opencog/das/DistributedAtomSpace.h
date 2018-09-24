@@ -32,9 +32,6 @@ namespace opencog
 
 /**
  *
- *
- * _varNames starting with underscore _ denote class variables
- *
  */
 class DistributedAtomSpace 
 {

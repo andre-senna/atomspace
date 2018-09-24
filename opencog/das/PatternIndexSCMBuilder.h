@@ -47,14 +47,9 @@ private:
 
     PatternIndex *index;
     KnowledgeBuildingBlock kbb;
-    CompoundHashValue kbbHashValue;
 
     void parseSCMFragment(const std::string &str);
     int countTargets(const std::string &txt, unsigned int begin);
-    int recursiveParse(const std::string &txt,
-                       KnowledgeBuildingBlock &kbb,
-                       CompoundHashValue &kbbHashValue,
-                       unsigned int begin);
 };
 
 }
