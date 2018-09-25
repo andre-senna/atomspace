@@ -17,11 +17,11 @@ PatternIndexImplementationRAM::~PatternIndexImplementationRAM()
 // Public PatternIndex API
 
 // TODO Add subpatterns as well
-void PatternIndexImplementationRAM::index(KnowledgeBuildingBlock *kbb, 
-                                          KBBReference &kbbReference)
+void PatternIndexImplementationRAM::index(const KnowledgeBuildingBlock &kbb, 
+                                          const KBBReference &kbbReference)
 {
 
-    unsigned short int size = kbb->size();
+    unsigned short int size = kbb.size();
     if (size == 0) {
         #ifdef __DEBUG
             printf("Attempt to index empty KBB. Discarding it...\n");
@@ -40,8 +40,8 @@ void PatternIndexImplementationRAM::index(KnowledgeBuildingBlock *kbb,
     IndexNode::IndexLinkTag tag;
 
     while (kbbCursor < size) {
-        tag.first = kbb->getTypeAt(kbbCursor);
-        tag.second = kbb->getArityAt(kbbCursor);
+        tag.first = kbb.getTypeAt(kbbCursor);
+        tag.second = kbb.getArityAt(kbbCursor);
         IndexNode::TagToIndexNodeMap::iterator it = (node->children).find(tag);
         if (it == (node->children).end()) {
             // There is no branch in this direction yet. So a new node is
@@ -69,9 +69,10 @@ void PatternIndexImplementationRAM::index(KnowledgeBuildingBlock *kbb,
     #endif
 }
 
-void PatternIndexImplementationRAM::query(list<KBBReference> &answer, KnowledgeBuildingBlock *key)
+void PatternIndexImplementationRAM::query(list<KBBReference> &answer, 
+                                          const KnowledgeBuildingBlock &key)
 {
-    unsigned short int size = key->size();
+    unsigned short int size = key.size();
     if (size == 0) {
         // Empty KBB. Nothing is done.
         return;
@@ -85,8 +86,8 @@ void PatternIndexImplementationRAM::query(list<KBBReference> &answer, KnowledgeB
     IndexNode::IndexLinkTag tag;
 
     while (kbbCursor < size) {
-        tag.first = key->getTypeAt(kbbCursor);
-        tag.second = key->getArityAt(kbbCursor);
+        tag.first = key.getTypeAt(kbbCursor);
+        tag.second = key.getArityAt(kbbCursor);
         IndexNode::TagToIndexNodeMap::iterator it = (node->children).find(tag);
         if (it == (node->children).end()) {
             // Mismatch. Nothing is added to 'answer'
@@ -114,8 +115,8 @@ void PatternIndexImplementationRAM::query(list<KBBReference> &answer, KnowledgeB
 // --------------------------------------------------------------------------------
 // Private methods
 
-void PatternIndexImplementationRAM::insertKBBOccurrence(KBBReference &kbbReference,
-                                                        KBB_DBID &kbbID)
+void PatternIndexImplementationRAM::insertKBBOccurrence(const KBBReference &kbbReference,
+                                                        const KBB_DBID &kbbID)
 {
     auto it = occurrences.find(kbbID);
     if (it == occurrences.end()) {

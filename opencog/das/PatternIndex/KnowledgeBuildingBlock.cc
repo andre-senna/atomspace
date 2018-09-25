@@ -1,7 +1,17 @@
 #include "KnowledgeBuildingBlock.h"
+#include "../CartesianProductGenerator.h"
+#include <opencog/atoms/base/Node.h>
+#include <opencog/atoms/base/Link.h>
 
 using namespace opencog;
 using namespace std;
+
+// Static initialization
+// TODO choose best "flag" values
+const Type KnowledgeBuildingBlock::ANY_KBB = 10000;
+const Type KnowledgeBuildingBlock::ANY_TYPE = 10001;
+const Arity KnowledgeBuildingBlock::ANY_ARITY = 10002;
+
 
 KnowledgeBuildingBlock::KnowledgeBuildingBlock() 
 {
@@ -12,23 +22,23 @@ KnowledgeBuildingBlock::~KnowledgeBuildingBlock()
     definition.clear();
 }
 
-void KnowledgeBuildingBlock::pushFront(Type type, Arity arity, KBB_HASHCODE atomID)
+void KnowledgeBuildingBlock::pushFront(Type type, Arity arity, KBB_HASHCODE atomHash)
 {
     KBBElement newElement;
     newElement.type = type;
     newElement.arity = arity;
-    newElement.atomID = atomID;
+    newElement.atomHash = atomHash;
     // TODO: use emplace()
     definition.insert(definition.begin(), newElement);
 }
 
 
-void KnowledgeBuildingBlock::pushBack(Type type, Arity arity, KBB_HASHCODE atomID)
+void KnowledgeBuildingBlock::pushBack(Type type, Arity arity, KBB_HASHCODE atomHash)
 {
     KBBElement newElement;
     newElement.type = type;
     newElement.arity = arity;
-    newElement.atomID = atomID;
+    newElement.atomHash = atomHash;
     // TODO: use emplace()
     definition.push_back(newElement);
 }
@@ -36,7 +46,7 @@ void KnowledgeBuildingBlock::pushBack(Type type, Arity arity, KBB_HASHCODE atomI
 void KnowledgeBuildingBlock::pushBack(const KnowledgeBuildingBlock &kbb)
 {
     for (const KBBElement &elem : kbb.definition) {
-        pushBack(elem.type, elem.arity, elem.atomID);
+        pushBack(elem.type, elem.arity, elem.atomHash);
     }
 }
 
@@ -48,6 +58,116 @@ void KnowledgeBuildingBlock::parseSCM(const std::string &str)
         throw runtime_error("Parse error\n");
     }
 }
+
+bool KnowledgeBuildingBlock::recursiveMatches(unsigned int cursor,
+                                              const Handle &handle) const
+{
+    Type t = definition[cursor].type;
+    CompoundHashValue hash;
+
+//printForDebug("kbb: ", "\n");
+//printf("Cursor: %u\n", cursor);
+//printf("Handle: %s", handle->to_string().c_str());
+
+    if (t == ANY_KBB) {
+        // ANY_KBB is a wildcard that matches any subgraph
+        return true;
+    } else {
+        Arity a = definition[cursor].arity;
+        Arity ha = (handle->is_link() ? LinkCast(handle)->get_arity() : 0);
+        if (t == ANY_TYPE) {
+            // ANY_TYPE matches any atom type but requires a match in
+            // arity as well. So either Handle's arity is a wildcard or it's
+            // equal to pattern's toplevel arity
+            return (a == ANY_ARITY) || (a == ha);
+        } else {
+            // If reached here then pattern's toplevel type is not
+            // a wildcard.
+            Type ht = handle->get_type();
+            if (t != ht) {
+                // Handle's type if different from pattern's toplevel type.
+                // It's a mismatch
+                return false;
+            } else {
+                if (a == ANY_ARITY) {
+                    // pattern's toplevel arity is a wildcard so it's a match.
+                    return true;
+                } else {
+                    // If reached here so neither type nor arity are wildcards.
+                    // Type have already been checked (and it passed) so check
+                    // if for arity.
+                    if (a != ha) return false; // mismatch
+                    if (a == 0) {
+                        // Handle is a Node. Use hashcode to check match.
+                        hash.reset();
+                        hash.feed(ht);
+                        hash.feed(NodeCast(handle)->get_name());
+//printf("%u %lu %s\n", ht, ha, NodeCast(handle)->get_name().c_str());
+//printf("%lu %lu\n", definition[cursor].atomHash, hash.get());
+//printf("%s\n", (definition[cursor].atomHash == hash.get()) ? "true" : "false");
+                        return (definition[cursor].atomHash == hash.get());
+                    } else {
+                        // Handle is a Link.
+                        if (nameserver().isA(t, UNORDERED_LINK)) {
+                            // It's an UNORDERED_LINK so any choice of Handle's
+                            // outgoing set to pattern's outgoing set that
+                            // matches are OK. For example, if Handle's outgoing
+                            // is (a, b) and pattern's outgoing is (x, y),
+                            // so we may have either:
+                            //
+                            // (1) a matches x, AND b matches y
+                            // (2) a matches y AND b matches x
+                            //
+                            // So if (1) or (2) passes, it's a match! If none
+                            // passes, it's a mismatch.
+                            CartesianProductGenerator cp(a, a, true);
+                            while (! cp.depleted()) {
+//cp.printForDebug("cp: ", "\n");
+                                bool flag = true;
+                                for (unsigned int i = 0; i < a; i++) {
+                                    unsigned int targetCursor = cursor + 1;
+                                    for (unsigned int j = 0; j < i; j++) {
+                                        targetCursor = targetCursor + definition[targetCursor].arity + 1;
+                                    }
+                                    if (! recursiveMatches(targetCursor, 
+                                                           LinkCast(handle)->getOutgoingAtom(cp.at(i)))) {
+                                        flag = false;
+                                        break;
+                                    }
+                                }
+                                if (flag) {
+                                    //printf("Matched handle: %s", handle->to_string().c_str());
+                                    return true;
+                                }
+                                cp.next();
+                            }
+//printf("Don't matched handle: %s", handle->to_string().c_str());
+                            return false;
+                        } else {
+                            // It's an ORDERED_LINK so each handle in outgoing
+                            // set must match.
+                            unsigned int nextTarget = cursor + 1;
+                            for (unsigned int i = 0; i < a; i++) {
+                                if (! recursiveMatches(nextTarget, LinkCast(handle)->getOutgoingAtom(i))) {
+                                    return false;
+                                }
+                                nextTarget = nextTarget + definition[nextTarget].arity + 1;
+                            }
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+bool KnowledgeBuildingBlock::matches(const Handle &handle) const
+{
+    // empty pattern never matches
+    return (definition.size() > 0) && recursiveMatches(0, handle);
+}
+
 
 int KnowledgeBuildingBlock::recursiveParse(const string &txt, 
                                         CompoundHashValue &kbbHashValue,
@@ -162,11 +282,11 @@ int KnowledgeBuildingBlock::countTargets(const string &txt, unsigned int begin)
     }
 }
 
-void KnowledgeBuildingBlock::printForDebug(const string &prefix, const string &suffix)
+void KnowledgeBuildingBlock::printForDebug(const string &prefix, const string &suffix) const
 {
     printf("%s", prefix.c_str());
     for (const KBBElement &elem : definition) {
-        printf("(%u %lu %lu) ", elem.type, elem.arity, elem.atomID);
+        printf("(%u %lu %lu) ", elem.type, elem.arity, elem.atomHash);
     }
     printf("%s", suffix.c_str());
 }

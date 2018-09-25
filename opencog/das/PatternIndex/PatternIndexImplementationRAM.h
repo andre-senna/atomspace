@@ -42,8 +42,8 @@ public:
     PatternIndexImplementationRAM();
     ~PatternIndexImplementationRAM();
 
-    void index(KnowledgeBuildingBlock *kbb, KBBReference &toplevel);
-    void query(std::list<KBBReference> &answer, KnowledgeBuildingBlock *key);
+    void index(const KnowledgeBuildingBlock &kbb, const KBBReference &toplevel);
+    void query(std::list<KBBReference> &answer, const KnowledgeBuildingBlock &key);
 
 private:
 
@@ -71,13 +71,12 @@ private:
     };
 
     // TODO Replace by Apache Ignite
-    typedef std::map<KBB_DBID, std::list<KBBReference> *> HashReferenceListMap;
-    HashReferenceListMap occurrences;
+    std::map<KBB_DBID, std::list<KBBReference> *> occurrences;
 
     IndexNode root;
     KBB_DBID nextKBBID;
 
-    void insertKBBOccurrence(KBBReference &toplevelKBBReference, KBB_DBID &kbbID);
+    void insertKBBOccurrence(const KBBReference &toplevelKBBReference, const KBB_DBID &kbbID);
 };
 
 }

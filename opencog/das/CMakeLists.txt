@@ -7,6 +7,7 @@ ADD_LIBRARY (das SHARED
 	CompoundHashValue
 	PatternIndexSCMBuilder
 	SCMLoader
+	CartesianProductGenerator
 	utils
 )
 
@@ -14,6 +15,7 @@ INSTALL (FILES
 	DistributedAtomSpace.h
 	CacheManager.h
 	CompoundHashValue.h
+	CartesianProductGenerator.h
 	utils.h
 	DESTINATION "include/opencog/das"
 )

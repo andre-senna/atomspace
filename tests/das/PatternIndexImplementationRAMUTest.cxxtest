@@ -112,7 +112,7 @@ void PatternIndexImplementationRAMUTest::test_insertAndQuery()
                     for (unsigned int j = 0; j < kbbSize; j++) {
                         v[i]->pushBack(randUnsignedInt(1, maxtype), randUnsignedInt(1, maxarity), hash++);
                     }
-                    index->index(v[i], nextHandle);
+                    index->index(*(v[i]), nextHandle);
                     auto it = checkIndex->find(v[i]);
                     if (it == checkIndex->end()) {
                         ReferenceList *newList = new ReferenceList();
@@ -125,7 +125,7 @@ void PatternIndexImplementationRAMUTest::test_insertAndQuery()
                 }
                 std::list<KBBReference> *answer = new std::list<KBBReference>();
                 for (unsigned int i = 0; i < KBB_COUNT; i++) {
-                    index->query(*answer, v[i]);
+                    index->query(*answer, *(v[i]));
                     auto it = checkIndex->find(v[i]);
                     TS_ASSERT(it != checkIndex->end());
                     TS_ASSERT_EQUALS((*it).second->size(), answer->size());

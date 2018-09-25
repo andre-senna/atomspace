@@ -1,0 +1,75 @@
+(SimilarityLink (ConceptNode "human") (ConceptNode "monkey"))
+Indexed KBB: (35 2 6159661122) (18 0 236790482) (18 0 3079965256) 
+(SimilarityLink (ConceptNode "human") (ConceptNode "chimp"))
+Indexed KBB: (35 2 3314251856) (18 0 236790482) (18 0 236618598) 
+(SimilarityLink (ConceptNode "chimp") (ConceptNode "monkey"))
+Indexed KBB: (35 2 6157426630) (18 0 236618598) (18 0 3079965256) 
+(SimilarityLink (ConceptNode "snake") (ConceptNode "earthworm"))
+Indexed KBB: (35 2 6762385648309) (18 0 237087367) (18 0 6759302092938) 
+(SimilarityLink (ConceptNode "rhino") (ConceptNode "triceratops"))
+Indexed KBB: (35 2 1144564865572802) (18 0 237047025) (18 0 1144561782541877) 
+(SimilarityLink (ConceptNode "snake") (ConceptNode "vine"))
+Indexed KBB: (35 2 475671050) (18 0 237087367) (18 0 18243391) 
+(SimilarityLink (ConceptNode "human") (ConceptNode "ent"))
+Indexed KBB: (35 2 256416946) (18 0 236790482) (18 0 1400528) 
+(InheritanceLink (ConceptNode "human") (ConceptNode "mammal"))
+Indexed KBB: (32 2 6159252753) (18 0 236790482) (18 0 3079563478) 
+(InheritanceLink (ConceptNode "monkey") (ConceptNode "mammal"))
+Indexed KBB: (32 2 43120524815) (18 0 3079965256) (18 0 3079563478) 
+(InheritanceLink (ConceptNode "chimp") (ConceptNode "mammal"))
+Indexed KBB: (32 2 6157018261) (18 0 236618598) (18 0 3079563478) 
+(InheritanceLink (ConceptNode "mammal") (ConceptNode "animal"))
+Indexed KBB: (32 2 43111208690) (18 0 3079563478) (18 0 3075470467) 
+(InheritanceLink (ConceptNode "reptile") (ConceptNode "animal"))
+Indexed KBB: (32 2 523857493774) (18 0 40060046946) (18 0 3075470467) 
+(InheritanceLink (ConceptNode "snake") (ConceptNode "reptile"))
+Indexed KBB: (32 2 43143595726) (18 0 237087367) (18 0 40060046946) 
+(InheritanceLink (ConceptNode "dinosaur") (ConceptNode "reptile"))
+Indexed KBB: (32 2 6799028913349) (18 0 519920573338) (18 0 40060046946) 
+(InheritanceLink (ConceptNode "triceratops") (ConceptNode "dinosaur"))
+Indexed KBB: (32 2 14879823095030748) (18 0 1144561782541877) (18 0 519920573338) 
+(InheritanceLink (ConceptNode "earthworm") (ConceptNode "animal"))
+Indexed KBB: (32 2 87874004091670) (18 0 6759302092938) (18 0 3075470467) 
+(InheritanceLink (ConceptNode "rhino") (ConceptNode "mammal"))
+Indexed KBB: (32 2 6162587812) (18 0 237047025) (18 0 3079563478) 
+(InheritanceLink (ConceptNode "vine") (ConceptNode "plant"))
+Indexed KBB: (32 2 475574436) (18 0 18243391) (18 0 236997344) 
+(InheritanceLink (ConceptNode "ent") (ConceptNode "plant"))
+Indexed KBB: (32 2 256617217) (18 0 1400528) (18 0 236997344) 
+Query 0:
+Pattern: (35 2 475671050) (18 0 237087367) (18 0 18243391) 
+1 matches
+(SimilarityLink
+  (ConceptNode "vine") ; [3117038143073657422][1]
+  (ConceptNode "snake") ; [7407805379537570910][1]
+) ; [11106829400790239649][1]
+
+Query 1:
+Pattern: (35 2 475671050) (18 0 18243391) (18 0 237087367) 
+1 matches
+(SimilarityLink
+  (ConceptNode "vine") ; [3117038143073657422][1]
+  (ConceptNode "snake") ; [7407805379537570910][1]
+) ; [11106829400790239649][1]
+
+Query 2:
+Pattern: (35 2 238619820) (18 0 237087367) (50 0 8681) 
+0 matches
+Query 3:
+Pattern: (35 2 238619820) (50 0 8681) (18 0 237087367) 
+0 matches
+Query 4:
+Pattern: (32 2 3081089340) (50 0 8681) (18 0 3079563478) 
+0 matches
+Query 5:
+Pattern: (32 2 40035746904) (18 0 3079563478) (50 0 8681) 
+0 matches
+Query 6:
+Pattern: (35 2 1541135) (50 0 8681) (50 0 8682) 
+0 matches
+Query 7:
+Pattern: (32 2 1534544) (50 0 8681) (50 0 8682) 
+0 matches
+Query 8:
+Pattern: (40 2 23006489) (35 2 1541135) (50 0 8681) (50 0 8682) (35 2 1541149) (50 0 8682) (50 0 8683) 
+0 matches

@@ -30,8 +30,10 @@
 namespace opencog
 {
 
+    // TODO: fix this
+    /*
     union KBBReference {
-        const Handle *handle;
+        Handle handle;
         KBB_UUID uuid;
 
         KBBReference() {uuid = 0;}
@@ -40,6 +42,8 @@ namespace opencog
         KBBReference& operator=(const KBBReference &other) {return (KBBReference &) (uuid = other.uuid);}
         bool operator==(const KBBReference &other) {return uuid == other.uuid;}
     };
+    */
+    typedef Handle KBBReference;
 
 /**
  *
@@ -53,9 +57,9 @@ public:
     virtual ~PatternIndex();
 
     // Public API implemented by subclasses
-    virtual void index(KnowledgeBuildingBlock *kbb, KBBReference &toplevel) = 0;
+    virtual void index(const KnowledgeBuildingBlock &kbb, const KBBReference &toplevel) = 0;
     // TODO: change query() interface to something more flexible
-    virtual void query(std::list<KBBReference> &answer, KnowledgeBuildingBlock *key) = 0;
+    virtual void query(std::list<KBBReference> &answer, const KnowledgeBuildingBlock &key) = 0;
 
 };
 

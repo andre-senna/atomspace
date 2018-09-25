@@ -49,10 +49,13 @@ private:
     typedef struct {
         Type type;
         Arity arity;
-        // TODO Is atomID needed?
-        KBB_HASHCODE atomID;
+        // TODO Is atomHash needed?
+        KBB_HASHCODE atomHash;
     } KBBElement;
 
+    static const Type ANY_KBB;
+    static const Type ANY_TYPE;
+    static const Arity ANY_ARITY;
     std::vector<KBBElement> definition;
 
 
@@ -60,6 +63,8 @@ private:
     int recursiveParse(const std::string &txt,
                        CompoundHashValue &kbbHashValue,
                        unsigned int begin);
+    bool recursiveMatches(unsigned int cursor, const Handle &handle) const;
+
 
     // "package" visibility
     // the following methods are accesed by "friend" classes 
@@ -74,11 +79,11 @@ private:
     }
     inline KBB_HASHCODE getAtomIDAt(unsigned short int pos) const
     {
-        return definition[pos].atomID;
+        return definition[pos].atomHash;
     }
     void pushBack(const KnowledgeBuildingBlock &kbb);
-    void pushBack(Type type, Arity arity, KBB_HASHCODE atomID = 0);
-    void pushFront(Type type, Arity arity, KBB_HASHCODE atomID = 0);
+    void pushBack(Type type, Arity arity, KBB_HASHCODE atomHash = 0);
+    void pushFront(Type type, Arity arity, KBB_HASHCODE atomHash = 0);
 
 public:
 
@@ -89,8 +94,9 @@ public:
     inline void clear() { definition.clear(); }
 
     void parseSCM(const std::string &str);
+    bool matches(const Handle &handle) const;
 
-    void printForDebug(const std::string &prefix, const std::string &sufix);
+    void printForDebug(const std::string &prefix, const std::string &sufix) const;
 
 };
 

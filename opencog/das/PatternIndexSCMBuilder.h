@@ -41,7 +41,7 @@ public:
 
     // SCMLoaderCallback interface
     void beforeInserting(const std::string &schemeStr);
-    void afterInserting(const Handle &toplevelAtom);
+    void afterInserting(Handle &toplevelAtom);
 
 private:
 

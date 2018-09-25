@@ -20,11 +20,13 @@ void PatternIndexSCMBuilder::beforeInserting(const std::string &schemeStr)
     parseSCMFragment(schemeStr);
 }
 
-void PatternIndexSCMBuilder::afterInserting(const Handle &toplevelAtom)
+void PatternIndexSCMBuilder::afterInserting(Handle &toplevelHandle)
 {
     KBBReference reference;
-    reference.handle = &toplevelAtom;
-    index->index(&kbb, reference);
+    // TODO use shared pointer
+    //reference.handle(toplevelHandle);
+    reference = toplevelHandle;
+    index->index(kbb, reference);
     if (DEBUG) kbb.printForDebug("Indexed KBB: ", "\n");
 }
 

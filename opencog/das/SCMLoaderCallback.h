@@ -55,7 +55,7 @@ public:
      * @param toplevelAtom The handle of the toplevel atom inserted into the
      * AtomSpace
      */
-    virtual void afterInserting(const Handle &toplevelAtom) = 0;
+    virtual void afterInserting(Handle &toplevelAtom) = 0;
 };
 
 }

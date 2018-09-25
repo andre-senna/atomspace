@@ -48,6 +48,9 @@ public:
     DistributedAtomSpace(const DistributedAtomSpace&) = delete;
     DistributedAtomSpace& operator=(const DistributedAtomSpace&) = delete;
 
+    void getLocal(std::list<Handle> &answer, const KnowledgeBuildingBlock &key);
+
+
 private:
 
     PatternIndex* globalPatternIndex;

@@ -24,6 +24,18 @@ DistributedAtomSpace::~DistributedAtomSpace()
     delete cacheManager;
 }
 
+void DistributedAtomSpace::getLocal(list<Handle> &answer, const KnowledgeBuildingBlock &key)
+{
+    list<KBBReference> indexAnswer;
+    localPatternIndex->query(indexAnswer, key);
+    for (const KBBReference &ref : indexAnswer) {
+        if (key.matches(ref)) {
+            answer.push_back(ref);
+        }
+    }
+}
+
+
 void DistributedAtomSpace::loadSCM(const std::string &fileName)
 {
     PatternIndexSCMBuilder builder(localPatternIndex);

@@ -34,18 +34,67 @@ int main(int argc, char *argv[]) {
     DistributedAtomSpace das;
     das.loadSCM(argv[1]);
 
-    std::string queryStr1 = "(AndLink\
-                               (SimilarityLink\
-                                 (VariableNode \"X\")\
-                                 (VariableNode \"Y\")\
-                               )\
-                               (SimilarityLink\
-                                 (VariableNode \"Y\")\
-                                 (VariableNode \"Z\")\
-                               )\
-                             )";
+    std::string queryStr[100];
+    unsigned int count = 0;
 
-    KnowledgeBuildingBlock pattern1;
+    queryStr[count++] = "(SimilarityLink\
+                            (ConceptNode \"snake\")\
+                            (ConceptNode \"vine\")\
+                         )";
+    queryStr[count++] = "(SimilarityLink\
+                            (ConceptNode \"vine\")\
+                            (ConceptNode \"snake\")\
+                         )";
+    queryStr[count++] = "(SimilarityLink\
+                            (ConceptNode \"snake\")\
+                            (VariableNode \"X\")\
+                         )";
+    queryStr[count++] = "(SimilarityLink\
+                            (VariableNode \"X\")\
+                            (ConceptNode \"snake\")\
+                         )";
+    queryStr[count++] = "(InheritanceLink\
+                            (VariableNode \"X\")\
+                            (ConceptNode \"mammal\")\
+                         )";
+    queryStr[count++] = "(InheritanceLink\
+                            (ConceptNode \"mammal\")\
+                            (VariableNode \"X\")\
+                         )";
+    queryStr[count++] = "(SimilarityLink\
+                            (VariableNode \"X\")\
+                            (VariableNode \"Y\")\
+                         )";
+    queryStr[count++] = "(InheritanceLink\
+                            (VariableNode \"X\")\
+                            (VariableNode \"Y\")\
+                         )";
+    queryStr[count++] = "(AndLink\
+                           (SimilarityLink\
+                             (VariableNode \"X\")\
+                             (VariableNode \"Y\")\
+                           )\
+                           (SimilarityLink\
+                             (VariableNode \"Y\")\
+                             (VariableNode \"Z\")\
+                           )\
+                         )";
+
+    KnowledgeBuildingBlock pattern;
+    list<Handle> queryAnswer;
+    for (unsigned int i = 0; i < count; i++) {
+        pattern.parseSCM(queryStr[i]);
+        queryAnswer.clear();
+        das.getLocal(queryAnswer, pattern);
+        printf("Query %u:\n", i);
+        pattern.printForDebug("Pattern: ", "\n");
+        //printf("Query %u: %s\n", i, queryStr[i].c_str());
+        printf("%lu matches\n", queryAnswer.size());
+        for (Handle &handle : queryAnswer) {
+            printf("%s\n", handle->to_string().c_str());
+            //printf("%p\n", handle.atom_ptr());
+        }
+    }
 
     return 0;
 }
