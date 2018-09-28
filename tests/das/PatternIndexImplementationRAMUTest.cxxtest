@@ -28,7 +28,7 @@ private:
         }
     };
 
-    typedef std::list<KBBReference> ReferenceList;
+    typedef std::list<KBB_UUID> ReferenceList;
     typedef std::map<KnowledgeBuildingBlock *, ReferenceList *, LessThan> KBBUUIDMap;
 
     std::random_device rd;
@@ -97,8 +97,7 @@ void PatternIndexImplementationRAMUTest::test_insertAndQuery()
 {
     unsigned int KBB_COUNT = 10000;
     KnowledgeBuildingBlock* v[KBB_COUNT];
-    KBBReference nextHandle;
-    nextHandle.uuid = 1;
+    KBB_UUID nextUUID = 1;
 
     for (unsigned int maxkbbsize = 3; maxkbbsize < 10; maxkbbsize++) {
         for (unsigned int maxtype = 3; maxtype < 10; maxtype++) {
@@ -112,18 +111,18 @@ void PatternIndexImplementationRAMUTest::test_insertAndQuery()
                     for (unsigned int j = 0; j < kbbSize; j++) {
                         v[i]->pushBack(randUnsignedInt(1, maxtype), randUnsignedInt(1, maxarity), hash++);
                     }
-                    index->index(*(v[i]), nextHandle);
+                    index->index(*(v[i]), nextUUID);
                     auto it = checkIndex->find(v[i]);
                     if (it == checkIndex->end()) {
                         ReferenceList *newList = new ReferenceList();
-                        newList->push_back(nextHandle);
+                        newList->push_back(nextUUID);
                         checkIndex->emplace(v[i], newList);
                     } else {
-                        (*it).second->push_back(nextHandle);
+                        (*it).second->push_back(nextUUID);
                     }
-                    nextHandle.uuid++;
+                    nextUUID++;
                 }
-                std::list<KBBReference> *answer = new std::list<KBBReference>();
+                std::list<KBB_UUID> *answer = new std::list<KBB_UUID>();
                 for (unsigned int i = 0; i < KBB_COUNT; i++) {
                     index->query(*answer, *(v[i]));
                     auto it = checkIndex->find(v[i]);

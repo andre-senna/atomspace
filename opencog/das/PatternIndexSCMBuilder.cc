@@ -22,11 +22,7 @@ void PatternIndexSCMBuilder::beforeInserting(const std::string &schemeStr)
 
 void PatternIndexSCMBuilder::afterInserting(Handle &toplevelHandle)
 {
-    KBBReference reference;
-    // TODO use shared pointer
-    //reference.handle(toplevelHandle);
-    reference = toplevelHandle;
-    index->index(kbb, reference);
+    index->index(kbb, toplevelHandle);
     if (DEBUG) kbb.printForDebug("Indexed KBB: ", "\n");
 }
 

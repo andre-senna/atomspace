@@ -50,6 +50,13 @@ void KnowledgeBuildingBlock::pushBack(const KnowledgeBuildingBlock &kbb)
     }
 }
 
+void KnowledgeBuildingBlock::pushBack(KnowledgeBuildingBlock *kbb)
+{
+    for (const KBBElement &elem : kbb->definition) {
+        pushBack(elem.type, elem.arity, elem.atomHash);
+    }
+}
+
 void KnowledgeBuildingBlock::parseSCM(const std::string &str)
 {
     clear();

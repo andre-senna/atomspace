@@ -39,9 +39,9 @@ class KnowledgeBuildingBlock
 {
 
 // uses "package" visible methods (see below)
-friend class PatternIndexImplementationRAM;
-friend class PatternIndexSCMBuilder;
-friend class ::PatternIndexImplementationRAMUTest;
+//friend class PatternIndexImplementationRAM;
+//friend class PatternIndexSCMBuilder;
+//friend class ::PatternIndexImplementationRAMUTest;
 
 private:
 
@@ -66,8 +66,21 @@ private:
     bool recursiveMatches(unsigned int cursor, const Handle &handle) const;
 
 
-    // "package" visibility
-    // the following methods are accesed by "friend" classes 
+public:
+
+    KnowledgeBuildingBlock();
+    ~KnowledgeBuildingBlock();
+
+    inline unsigned short int size() const { return definition.size(); }
+    inline void clear() { definition.clear(); }
+
+    void parseSCM(const std::string &str);
+    bool matches(const Handle &handle) const;
+
+    void printForDebug(const std::string &prefix, const std::string &sufix) const;
+      
+    // TODO:
+    // the following methods should be accesed only by "friend" classes 
 
     inline Type getTypeAt(unsigned short int pos) const
     {
@@ -82,22 +95,9 @@ private:
         return definition[pos].atomHash;
     }
     void pushBack(const KnowledgeBuildingBlock &kbb);
+    void pushBack(KnowledgeBuildingBlock *kbb);
     void pushBack(Type type, Arity arity, KBB_HASHCODE atomHash = 0);
     void pushFront(Type type, Arity arity, KBB_HASHCODE atomHash = 0);
-
-public:
-
-    KnowledgeBuildingBlock();
-    ~KnowledgeBuildingBlock();
-
-    inline unsigned short int size() const { return definition.size(); }
-    inline void clear() { definition.clear(); }
-
-    void parseSCM(const std::string &str);
-    bool matches(const Handle &handle) const;
-
-    void printForDebug(const std::string &prefix, const std::string &sufix) const;
-
 };
 
 }

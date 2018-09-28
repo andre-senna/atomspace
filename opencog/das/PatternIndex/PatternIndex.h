@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 OpenCog Foundation
+ * Copyright (C) 2018 OpenCog Foundation
  *
  * Author: Andre Senna <https://github.com/andre-senna>
  *
@@ -43,7 +43,7 @@ namespace opencog
         bool operator==(const KBBReference &other) {return uuid == other.uuid;}
     };
     */
-    typedef Handle KBBReference;
+    //typedef Handle KBBReference;
 
 /**
  *
@@ -57,9 +57,11 @@ public:
     virtual ~PatternIndex();
 
     // Public API implemented by subclasses
-    virtual void index(const KnowledgeBuildingBlock &kbb, const KBBReference &toplevel) = 0;
+    virtual void index(const KnowledgeBuildingBlock &kbb, const Handle &toplevel) = 0;
+    virtual void index(const KnowledgeBuildingBlock &kbb, KBB_UUID id) = 0;
     // TODO: change query() interface to something more flexible
-    virtual void query(std::list<KBBReference> &answer, const KnowledgeBuildingBlock &key) = 0;
+    virtual void query(std::list<Handle> &answer, const KnowledgeBuildingBlock &key, bool localOnly = true) = 0;
+    virtual void query(std::list<KBB_UUID> &answer, const KnowledgeBuildingBlock &key, bool externOnly = true) = 0;
 
 };
 

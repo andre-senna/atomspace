@@ -53,8 +53,7 @@ public:
 
 private:
 
-    PatternIndex* globalPatternIndex;
-    PatternIndex* localPatternIndex;
+    PatternIndex* patternIndex;
     CacheManager* cacheManager;
     AtomSpace* atomSpace;
 

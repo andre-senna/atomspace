@@ -48,6 +48,9 @@ public:
     void reset();
     void feed(unsigned long int n);
     void feed(const std::string &s);
+    // This method is unsafe as it assumes that s is properly
+    // terminated with '\0' (no check is done).
+    void feed(char *s);
     KBB_HASHCODE get();
 
 private:
@@ -55,10 +58,6 @@ private:
     static const KBB_HASHCODE INVALID;
     KBB_HASHCODE hashCode;
 
-    // This method is private because it's unsafe as it assumes
-    // that s is properly terminated with '\0' (no check is done).
-    // So it's used only in this package by "friend" classes.
-    void feed(char *s);
 };
 
 }

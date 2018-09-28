@@ -42,10 +42,15 @@ public:
     PatternIndexImplementationRAM();
     ~PatternIndexImplementationRAM();
 
-    void index(const KnowledgeBuildingBlock &kbb, const KBBReference &toplevel);
-    void query(std::list<KBBReference> &answer, const KnowledgeBuildingBlock &key);
+    // PatternIndex API
+    void index(const KnowledgeBuildingBlock &kbb, const Handle &toplevel);
+    void index(const KnowledgeBuildingBlock &kbb, KBB_UUID id);
+    void query(std::list<Handle> &answer, const KnowledgeBuildingBlock &key, bool localOnly = true);
+    void query(std::list<KBB_UUID> &answer, const KnowledgeBuildingBlock &key, bool externOnly = true);
 
 private:
+
+    const bool DEBUG = false;
 
     class IndexNode
     {
@@ -71,12 +76,17 @@ private:
     };
 
     // TODO Replace by Apache Ignite
-    std::map<KBB_DBID, std::list<KBBReference> *> occurrences;
+    std::map<KBB_DBID, std::list<Handle> *> occurrencesLocal;
+    std::map<KBB_DBID, std::list<KBB_UUID> *> occurrencesGlobal;
 
-    IndexNode root;
+    IndexNode rootLocal;
+    IndexNode rootGlobal;
     KBB_DBID nextKBBID;
 
-    void insertKBBOccurrence(const KBBReference &toplevelKBBReference, const KBB_DBID &kbbID);
+    void insertKBBOccurrence(const Handle &toplevel, const KBB_DBID &dbid);
+    void insertKBBOccurrence(KBB_UUID uuid, const KBB_DBID &dbid);
+    IndexNode *findIndexNode(const KnowledgeBuildingBlock &kbb, IndexNode *root, bool insertFlag);
+
 };
 
 }

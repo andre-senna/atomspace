@@ -34,6 +34,7 @@ public:
 	void setUp();
 	void tearDown();
 
+    void test_small_string_feed();
     void test_basics();
     void test_invalid_state();
 };
@@ -118,5 +119,36 @@ void CompoundHashValueUTest::test_invalid_state()
 
     for (unsigned int i = 0; i < 1000000000; i++) {
         TS_ASSERT_THROWS_NOTHING(hv.feed((KBB_HASHCODE) i));
+    }
+}
+
+void CompoundHashValueUTest::test_small_string_feed()
+{
+
+/*
+    CompoundHashValue x;
+    x.feed(40);
+    x.feed(2);
+    x.feed(1541135);
+    x.feed(1541149);
+    printf("\n%lu\n", x.get());
+    exit(0);
+*/
+
+    unsigned int count = 7;
+    CompoundHashValue h[count];
+
+    h[0].feed((std::string) "");
+    h[1].feed((std::string) "x");
+    h[2].feed((std::string) "y");
+    h[3].feed((std::string) "z");
+    h[4].feed((std::string) "X");
+    h[5].feed((std::string) "Y");
+    h[6].feed((std::string) "Z");
+
+    for (unsigned int i = 0; i < count; i++) {
+        for (unsigned int j = i + 1; j < count; j++) {
+            TS_ASSERT(h[i].get() != h[j].get());
+        }   
     }
 }

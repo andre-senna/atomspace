@@ -18,16 +18,87 @@ PatternIndexImplementationRAM::~PatternIndexImplementationRAM()
 
 // TODO Add subpatterns as well
 void PatternIndexImplementationRAM::index(const KnowledgeBuildingBlock &kbb, 
-                                          const KBBReference &kbbReference)
+                                          const Handle &toplevel)
 {
+    IndexNode *node = findIndexNode(kbb, &rootLocal, true);
+    insertKBBOccurrence(toplevel, node->kbbID);
+    if (DEBUG) printf("New KBB indexed\n");
+}
 
+// TODO Add subpatterns as well
+void PatternIndexImplementationRAM::index(const KnowledgeBuildingBlock &kbb, 
+                                          KBB_UUID id)
+{
+    IndexNode *node = findIndexNode(kbb, &rootGlobal, true);
+    insertKBBOccurrence(id, node->kbbID);
+    if (DEBUG) printf("New KBB indexed\n");
+}
+
+void PatternIndexImplementationRAM::query(list<Handle> &answer, 
+                                          const KnowledgeBuildingBlock &key,
+                                          bool localOnly)
+{
+    IndexNode *node = findIndexNode(key, &rootLocal, false);
+    if (node == nullptr) return;
+    auto it = occurrencesLocal.find(node->kbbID);
+    if (it == occurrencesLocal.end()) throw runtime_error("Mapping not found");
+    if (DEBUG) printf("Query: leaf has %lu UUIds\n", (*it).second->size());
+    answer.insert(answer.begin(), (*it).second->begin(), (*it).second->end());
+}
+
+void PatternIndexImplementationRAM::query(list<KBB_UUID> &answer, 
+                                          const KnowledgeBuildingBlock &key,
+                                          bool externOnly)
+{
+    IndexNode *node = findIndexNode(key, &rootGlobal, false);
+    if (node == nullptr) return;
+    auto it = occurrencesGlobal.find(node->kbbID);
+    if (it == occurrencesGlobal.end()) throw runtime_error("Mapping not found");
+    if (DEBUG) printf("Query: leaf has %lu UUIds\n", (*it).second->size());
+    answer.insert(answer.begin(), (*it).second->begin(), (*it).second->end());
+}
+
+// --------------------------------------------------------------------------------
+// Private methods
+
+void PatternIndexImplementationRAM::insertKBBOccurrence(const Handle &kbbReference,
+                                                        const KBB_DBID &kbbID)
+{
+    auto it = occurrencesLocal.find(kbbID);
+    if (it == occurrencesLocal.end()) {
+        list<Handle> *newList = new list<Handle>();
+        newList->push_back(kbbReference);
+        occurrencesLocal.emplace(kbbID, newList);
+    } else {
+        (*it).second->push_back(kbbReference);
+    }
+}
+
+void PatternIndexImplementationRAM::insertKBBOccurrence(KBB_UUID kbbReference,
+                                                        const KBB_DBID &kbbID)
+{
+    auto it = occurrencesGlobal.find(kbbID);
+    if (it == occurrencesGlobal.end()) {
+        list<KBB_UUID> *newList = new list<KBB_UUID>();
+        newList->push_back(kbbReference);
+        occurrencesGlobal.emplace(kbbID, newList);
+    } else {
+        (*it).second->push_back(kbbReference);
+    }
+}
+
+PatternIndexImplementationRAM::IndexNode *PatternIndexImplementationRAM::findIndexNode(
+                                              const KnowledgeBuildingBlock &kbb,
+                                              IndexNode *root,
+                                              bool insertFlag)
+{
     unsigned short int size = kbb.size();
     if (size == 0) {
-        #ifdef __DEBUG
-            printf("Attempt to index empty KBB. Discarding it...\n");
-        #endif
-        // Empty KBB. Nothing is done.
-        return;
+        if (insertFlag) {
+            throw runtime_error("Attempt to index an empty KBB");
+        } else {
+            return nullptr;
+        }
     }
 
     // Traverse the prefix index tree to find the leaf corresponding to the
@@ -36,7 +107,7 @@ void PatternIndexImplementationRAM::index(const KnowledgeBuildingBlock &kbb,
     // occurrence is added.
 
     unsigned short int kbbCursor = 0;
-    IndexNode *node = &root;
+    IndexNode *node = root;
     IndexNode::IndexLinkTag tag;
 
     while (kbbCursor < size) {
@@ -44,11 +115,14 @@ void PatternIndexImplementationRAM::index(const KnowledgeBuildingBlock &kbb,
         tag.second = kbb.getArityAt(kbbCursor);
         IndexNode::TagToIndexNodeMap::iterator it = (node->children).find(tag);
         if (it == (node->children).end()) {
-            // There is no branch in this direction yet. So a new node is
-            // created.
-            IndexNode *newNode = new IndexNode();
-            (node->children).emplace(tag, newNode);
-            node = newNode;
+            // Mismatch. if inserting, a new IndexNode is created.
+            if (insertFlag) {
+                IndexNode *newNode = new IndexNode();
+                (node->children).emplace(tag, newNode);
+                node = newNode;
+            } else {
+                return nullptr;
+            }
         } else {
             // Reuse branch
             node = (*it).second;
@@ -56,76 +130,15 @@ void PatternIndexImplementationRAM::index(const KnowledgeBuildingBlock &kbb,
         kbbCursor++;
     }
 
-    // At this point, node is pointing to the proper leaf, which can be a newly
-    // created one. In this case, a new KBB ID need to be assigned to this leaf
-    if (node->kbbID == 0) {
-        node->kbbID = nextKBBID++;
-    }
-
-    // Actually inserts the new occurrence of the passed KBB
-    insertKBBOccurrence(kbbReference, node->kbbID);
-    #ifdef __DEBUG
-        printf("New KBB indexed\n");
-    #endif
-}
-
-void PatternIndexImplementationRAM::query(list<KBBReference> &answer, 
-                                          const KnowledgeBuildingBlock &key)
-{
-    unsigned short int size = key.size();
-    if (size == 0) {
-        // Empty KBB. Nothing is done.
-        return;
-    }
-
-    // Traverse the prefix index tree to find the leaf corresponding to the
-    // passed KBB.
-
-    unsigned short int kbbCursor = 0;
-    IndexNode *node = &root;
-    IndexNode::IndexLinkTag tag;
-
-    while (kbbCursor < size) {
-        tag.first = key.getTypeAt(kbbCursor);
-        tag.second = key.getArityAt(kbbCursor);
-        IndexNode::TagToIndexNodeMap::iterator it = (node->children).find(tag);
-        if (it == (node->children).end()) {
-            // Mismatch. Nothing is added to 'answer'
-            return;
-        } else {
-            node = (*it).second;
+    if (insertFlag) {
+        // At this point, node is pointing to the proper leaf, which can be a newly
+        // created one. In this case, a new KBB ID need to be assigned to this leaf
+        if (node->kbbID == 0) {
+            node->kbbID = nextKBBID++;
         }
-        kbbCursor++;
     }
 
-    // At this point, node is pointing to the corresponding leaf.
-   
-    auto it = occurrences.find(node->kbbID);
-    if (it == occurrences.end()) {
-        throw runtime_error("Mapping not found");
-    }
-
-    #ifdef __DEBUG
-        printf("Query: leaf has %lu UUIds\n", (*it).second->size());
-    #endif
-
-    answer.insert(answer.begin(), (*it).second->begin(), (*it).second->end());
-}
-
-// --------------------------------------------------------------------------------
-// Private methods
-
-void PatternIndexImplementationRAM::insertKBBOccurrence(const KBBReference &kbbReference,
-                                                        const KBB_DBID &kbbID)
-{
-    auto it = occurrences.find(kbbID);
-    if (it == occurrences.end()) {
-        list<KBBReference> *newList = new list<KBBReference>();
-        newList->push_back(kbbReference);
-        occurrences.emplace(kbbID, newList);
-    } else {
-        (*it).second->push_back(kbbReference);
-    }
+    return node;
 }
 
 // --------------------------------------------------------------------------------

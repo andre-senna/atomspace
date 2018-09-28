@@ -4,7 +4,10 @@ TARGET_LINK_LIBRARIES(queryExample
 	patternindex
 	smob
 	atomspace
+	atomeseparser
 )
+
+# -lfl
 
 ADD_EXECUTABLE (checkKBBs checkKBBs.cc)
 TARGET_LINK_LIBRARIES(checkKBBs

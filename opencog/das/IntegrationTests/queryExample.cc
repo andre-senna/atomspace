@@ -20,9 +20,12 @@
  */
 
 #include "../DistributedAtomSpace.h"
+#include "../AtomeseParser/AtomeseParser.h"
 
 using namespace opencog;
 using namespace std;
+
+void parseString(const char *s);
 
 int main(int argc, char *argv[]) {
 
@@ -83,7 +86,8 @@ int main(int argc, char *argv[]) {
     KnowledgeBuildingBlock pattern;
     list<Handle> queryAnswer;
     for (unsigned int i = 0; i < count; i++) {
-        pattern.parseSCM(queryStr[i]);
+        //pattern.parseSCM(queryStr[i]);
+        AtomeseParser::parseString(pattern, queryStr[i]);
         queryAnswer.clear();
         das.getLocal(queryAnswer, pattern);
         printf("Query %u:\n", i);

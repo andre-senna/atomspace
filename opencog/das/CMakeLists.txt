@@ -1,5 +1,6 @@
 ADD_SUBDIRECTORY (PatternIndex)
 ADD_SUBDIRECTORY (IntegrationTests)
+ADD_SUBDIRECTORY (AtomeseParser)
 
 ADD_LIBRARY (das SHARED
 	DistributedAtomSpace

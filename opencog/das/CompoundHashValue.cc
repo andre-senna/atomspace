@@ -43,8 +43,9 @@ void CompoundHashValue::feed(char *s)
 {
     unsigned int i = 0;
     // Unsafe. That's why this method is private (used by 'friend' classes)
-    while (s[i++] != '\0') {
+    while (s[i] != '\0') {
         feed((unsigned long int) s[i]);
+        i++;
     }
 }
 
