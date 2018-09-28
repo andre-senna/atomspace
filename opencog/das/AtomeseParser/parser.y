@@ -10,7 +10,7 @@ extern int yylex();
 // Functions defined in lexer.l
 extern void yyerror(const char *s);
 
-static bool DEBUG = true;
+static bool DEBUG = false;
 extern opencog::AtomeseParser *opencog_atomeseParser_environment;
 %}
 
@@ -21,7 +21,7 @@ extern opencog::AtomeseParser *opencog_atomeseParser_environment;
     opencog::Type tval;
 }
 
-%token STV AV
+%token STV AV STAR
 
 %token UNKNOWN_TYPE
 %token <ival> INT
@@ -37,6 +37,7 @@ atom_list : atom_list atom
 
 atom : node
      | link
+     | pattern
      ;
                
 node : '('
@@ -58,6 +59,10 @@ link : '('
        ')'
        comment { opencog_atomeseParser_environment->addNewLink(); }
        ;
+
+pattern : '(' STAR ')' { opencog_atomeseParser_environment->addNewPattern(0); }
+        | '(' NODE_TYPE STAR')' { opencog_atomeseParser_environment->addNewPattern($2); }
+        | '(' LINK_TYPE STAR')' { opencog_atomeseParser_environment->addNewPattern($2); }
 
 link_body : atom_values
             atom_list

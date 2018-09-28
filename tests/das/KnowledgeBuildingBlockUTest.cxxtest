@@ -1,0 +1,94 @@
+#include <cxxtest/TestSuite.h>
+#include <cstdlib>
+#include <cstdio>
+#include <random>
+#include <thread>
+#include <vector>
+#include <string>
+#include "../../opencog/das/PatternIndex/KnowledgeBuildingBlock.h"
+
+using namespace opencog;
+using namespace std;
+
+class KnowledgeBuildingBlockUTest : public CxxTest::TestSuite
+{
+
+private:
+ 
+    std::random_device rd;
+    std::mt19937 *mt;
+    std::uniform_int_distribution<unsigned int> *intRandomDist;
+    std::uniform_real_distribution<float> *floatRandomDist;
+    
+    unsigned int randUnsignedInt();
+    float randFloat();
+    unsigned int randUnsignedInt(unsigned int lowerBound, unsigned int upperBound);
+    float randFloat(float lowerBound, float upperBound);
+
+public:
+
+	KnowledgeBuildingBlockUTest();
+	~KnowledgeBuildingBlockUTest();
+
+	void setUp();
+	void tearDown();
+
+    void test_pattern_masks();
+};
+
+KnowledgeBuildingBlockUTest::KnowledgeBuildingBlockUTest()
+{
+    mt = new std::mt19937(rd());
+    intRandomDist = new std::uniform_int_distribution<unsigned int>(0, 10000000);
+    floatRandomDist = new std::uniform_real_distribution<float>(0, 1);
+}
+
+KnowledgeBuildingBlockUTest::~KnowledgeBuildingBlockUTest() {
+}
+
+void KnowledgeBuildingBlockUTest::setUp()
+{
+}
+
+void KnowledgeBuildingBlockUTest::tearDown() 
+{  
+}
+
+unsigned int KnowledgeBuildingBlockUTest::randUnsignedInt()
+{
+    return (*intRandomDist)(*mt);
+}
+
+float KnowledgeBuildingBlockUTest::randFloat()
+{
+    return (*floatRandomDist)(*mt);
+}
+
+unsigned int KnowledgeBuildingBlockUTest::randUnsignedInt(unsigned int lowerBound, unsigned int upperBound)
+{
+    return lowerBound + (randUnsignedInt() % (upperBound - lowerBound + 1));
+}
+
+float KnowledgeBuildingBlockUTest::randFloat(float lowerBound, float upperBound)
+{
+    float r = lowerBound + (randUnsignedInt() * (upperBound - lowerBound));
+    if (r > upperBound) return upperBound;
+    if (r < lowerBound) return lowerBound;
+    return r;
+}
+
+
+void KnowledgeBuildingBlockUTest::test_pattern_masks()
+{
+    printf("\n");
+
+    printf("%lu", sizeof(Type));
+    printf("----\n");
+    printf("%u\n", KnowledgeBuildingBlock::ANY_KBB_PATTERN_MASK);
+    printf("%u\n", KnowledgeBuildingBlock::TYPED_KBB_PATTERN_MASK);
+    printf("%u\n", KnowledgeBuildingBlock::KBB_PATTERN_TYPE_MASK);
+    printf("%u\n", (Type) (KnowledgeBuildingBlock::ANY_KBB_PATTERN_MASK >> 14));
+    printf("%u\n", (Type) (KnowledgeBuildingBlock::TYPED_KBB_PATTERN_MASK >> 14));
+    printf("%u\n", (Type) ((Type) ~KnowledgeBuildingBlock::KBB_PATTERN_TYPE_MASK) >> 14);
+
+}

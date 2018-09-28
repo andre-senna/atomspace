@@ -55,6 +55,10 @@ static bool DEBUG = false;
     if (DEBUG) printf("LEXER: NODE_NAME <%s>\n", yylval.sval);
     return NODE_NAME;
 }
+\* {
+    if (DEBUG) printf("LEXER: STAR\n");
+    return STAR;
+}
 . {
     if (DEBUG) printf("LEXER: '%c'\n", yytext[0]);
     return yytext[0];

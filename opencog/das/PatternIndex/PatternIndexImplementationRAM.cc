@@ -38,12 +38,13 @@ void PatternIndexImplementationRAM::query(list<Handle> &answer,
                                           const KnowledgeBuildingBlock &key,
                                           bool localOnly)
 {
-    IndexNode *node = findIndexNode(key, &rootLocal, false);
-    if (node == nullptr) return;
-    auto it = occurrencesLocal.find(node->kbbID);
-    if (it == occurrencesLocal.end()) throw runtime_error("Mapping not found");
-    if (DEBUG) printf("Query: leaf has %lu UUIds\n", (*it).second->size());
-    answer.insert(answer.begin(), (*it).second->begin(), (*it).second->end());
+    if (findIndexNode(key, &rootLocal, false) == nullptr) return;
+    for (auto node : patternMatched) {
+        auto it = occurrencesLocal.find(node->kbbID);
+        if (it == occurrencesLocal.end()) throw runtime_error("Mapping not found");
+        if (DEBUG) printf("Query: leaf has %lu UUIds\n", (*it).second->size());
+        answer.insert(answer.end(), (*it).second->begin(), (*it).second->end());
+    }
 }
 
 void PatternIndexImplementationRAM::query(list<KBB_UUID> &answer, 
@@ -52,10 +53,13 @@ void PatternIndexImplementationRAM::query(list<KBB_UUID> &answer,
 {
     IndexNode *node = findIndexNode(key, &rootGlobal, false);
     if (node == nullptr) return;
-    auto it = occurrencesGlobal.find(node->kbbID);
-    if (it == occurrencesGlobal.end()) throw runtime_error("Mapping not found");
-    if (DEBUG) printf("Query: leaf has %lu UUIds\n", (*it).second->size());
-    answer.insert(answer.begin(), (*it).second->begin(), (*it).second->end());
+    if (findIndexNode(key, &rootLocal, false) == nullptr) return;
+    for (auto node : patternMatched) {
+        auto it = occurrencesGlobal.find(node->kbbID);
+        if (it == occurrencesGlobal.end()) throw runtime_error("Mapping not found");
+        if (DEBUG) printf("Query: leaf has %lu UUIds\n", (*it).second->size());
+        answer.insert(answer.end(), (*it).second->begin(), (*it).second->end());
+    }   
 }
 
 // --------------------------------------------------------------------------------
@@ -87,6 +91,16 @@ void PatternIndexImplementationRAM::insertKBBOccurrence(KBB_UUID kbbReference,
     }
 }
 
+void PatternIndexImplementationRAM::traverse(IndexNode *node)
+{
+    if (node->kbbID != 0) {
+        patternMatched.push_back(node);
+    }
+    for (auto p : node->children) {
+        traverse(p.second);
+    }
+}
+
 PatternIndexImplementationRAM::IndexNode *PatternIndexImplementationRAM::findIndexNode(
                                               const KnowledgeBuildingBlock &kbb,
                                               IndexNode *root,
@@ -109,6 +123,7 @@ PatternIndexImplementationRAM::IndexNode *PatternIndexImplementationRAM::findInd
     unsigned short int kbbCursor = 0;
     IndexNode *node = root;
     IndexNode::IndexLinkTag tag;
+    patternMatched.clear();
 
     while (kbbCursor < size) {
         tag.first = kbb.getTypeAt(kbbCursor);
@@ -121,10 +136,31 @@ PatternIndexImplementationRAM::IndexNode *PatternIndexImplementationRAM::findInd
                 (node->children).emplace(tag, newNode);
                 node = newNode;
             } else {
+                if ((tag.first & KnowledgeBuildingBlock::ANY_KBB_PATTERN_MASK) > 0) {
+                    // Matches any subgraph. So all the leafs hereafter will be
+                    // put in "patternMatched".
+                    //printf("XXX ANY\n");
+                    traverse(node);
+                    return node;
+                } else if ((tag.first & KnowledgeBuildingBlock::KBB_PATTERN_TYPE_MASK) > 0) {
+                    // Matches any subgraphs whose toplevel == tag.first
+                    Type t = (Type) (tag.first & KnowledgeBuildingBlock::KBB_PATTERN_TYPE_MASK);
+                    //printf("XXX TYPE %u\n", t);
+                    bool flag = false;
+                    for (auto p : node->children) {
+                        if (p.first.first == t) {
+                            flag = true;
+                            traverse(p.second);
+                        }
+                    }
+                    return (flag ? node : nullptr);
+                } else {
+                    // No pattern match.
+                    return nullptr;
+                }
                 return nullptr;
             }
         } else {
-            // Reuse branch
             node = (*it).second;
         }
         kbbCursor++;
@@ -136,6 +172,9 @@ PatternIndexImplementationRAM::IndexNode *PatternIndexImplementationRAM::findInd
         if (node->kbbID == 0) {
             node->kbbID = nextKBBID++;
         }
+    } else {
+        // Node matches key but key has no wildcards
+        patternMatched.push_back(node);
     }
 
     return node;

@@ -21,3 +21,11 @@ TARGET_LINK_LIBRARIES(CompoundHashValueUTest
 	smob
 	atomspace
 )
+
+ADD_CXXTEST(KnowledgeBuildingBlockUTest)
+TARGET_LINK_LIBRARIES(KnowledgeBuildingBlockUTest
+	das
+	patternindex
+	smob
+	atomspace
+)

@@ -82,11 +82,12 @@ private:
     IndexNode rootLocal;
     IndexNode rootGlobal;
     KBB_DBID nextKBBID;
+    std::list<IndexNode *> patternMatched;
 
     void insertKBBOccurrence(const Handle &toplevel, const KBB_DBID &dbid);
     void insertKBBOccurrence(KBB_UUID uuid, const KBB_DBID &dbid);
     IndexNode *findIndexNode(const KnowledgeBuildingBlock &kbb, IndexNode *root, bool insertFlag);
-
+    void traverse(IndexNode *node);
 };
 
 }

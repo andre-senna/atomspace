@@ -52,6 +52,7 @@ public:
     void addNewNode(Type t, char *name);
     void startNewLink(Type t);
     void addNewLink();
+    void addNewPattern(Type t);
       
 private:
 

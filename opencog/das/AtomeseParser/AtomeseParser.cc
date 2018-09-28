@@ -114,6 +114,7 @@ void AtomeseParser::addNewLink()
             targetHashValuesStack.back().push_back(h.get());
         }
         currentKBB->pushFront(currentLinkType, currentArity, h.get());
+        if (DEBUG) printf("Link hash value = %lu\n", hashValue.get());
         //if (DEBUG) currentKBB->printForDebug("currentKBB: ", "\n");
         nextCurrentKBB->pushBack(currentKBB);
         //if (DEBUG) nextCurrentKBB->printForDebug("nextCurrentKBB: ", "\n");
@@ -130,5 +131,32 @@ void AtomeseParser::addNewLink()
             currentKBB = new KnowledgeBuildingBlock();;
         }
     //}
+}
+
+void AtomeseParser::addNewPattern(Type t)
+{
+    if (DEBUG) printf("addNewPattern() %u\n", t);
+
+    if (t == 0) {
+        t = KnowledgeBuildingBlock::ANY_KBB_PATTERN_MASK;
+    } else {
+        t |= KnowledgeBuildingBlock::TYPED_KBB_PATTERN_MASK;
+    }
+
+    currentArity++;
+    hashValue.reset();
+    hashValue.feed(t);
+    if (DEBUG) printf("Pattern hash value = %lu\n", hashValue.get());
+    currentKBB->pushBack(t, 0, hashValue.get());
+    if (! targetHashValuesStack.empty()) {
+        targetHashValuesStack.back().push_back(hashValue.get());
+    }
+
+    if ((MODE == KBB_LIST) && (arityStack.empty())) {
+        if (DEBUG) currentKBB->printForDebug("New Pattern: ", "\n");
+        if (DEBUG) printf("--------------------------------------------------------------------------------\n");
+        currentKBBList->push_back(currentKBB);
+        currentKBB = new KnowledgeBuildingBlock();;
+    }
 }
 

@@ -49,28 +49,36 @@ int main(int argc, char *argv[]) {
                             (ConceptNode \"snake\")\
                          )";
     queryStr[count++] = "(SimilarityLink\
+                            (ConceptNode *)\
                             (ConceptNode \"snake\")\
-                            (VariableNode \"X\")\
                          )";
     queryStr[count++] = "(SimilarityLink\
-                            (VariableNode \"X\")\
+                            (NumberNode *)\
                             (ConceptNode \"snake\")\
                          )";
+    queryStr[count++] = "(SimilarityLink\
+                            (*)\
+                            (ConceptNode \"snake\")\
+                         )";
+    queryStr[count++] = "(SimilarityLink\
+                            (ConceptNode \"snake\")\
+                            (*)\
+                         )";
     queryStr[count++] = "(InheritanceLink\
-                            (VariableNode \"X\")\
+                            (*)\
                             (ConceptNode \"mammal\")\
                          )";
     queryStr[count++] = "(InheritanceLink\
                             (ConceptNode \"mammal\")\
-                            (VariableNode \"X\")\
+                            (*)\
                          )";
     queryStr[count++] = "(SimilarityLink\
-                            (VariableNode \"X\")\
-                            (VariableNode \"Y\")\
+                            (*)\
+                            (*)\
                          )";
     queryStr[count++] = "(InheritanceLink\
-                            (VariableNode \"X\")\
-                            (VariableNode \"Y\")\
+                            (*)\
+                            (*)\
                          )";
     queryStr[count++] = "(AndLink\
                            (SimilarityLink\

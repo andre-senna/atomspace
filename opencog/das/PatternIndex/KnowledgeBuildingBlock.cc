@@ -7,11 +7,9 @@ using namespace opencog;
 using namespace std;
 
 // Static initialization
-// TODO choose best "flag" values
-const Type KnowledgeBuildingBlock::ANY_KBB = 10000;
-const Type KnowledgeBuildingBlock::ANY_TYPE = 10001;
-const Arity KnowledgeBuildingBlock::ANY_ARITY = 10002;
-
+const Type KnowledgeBuildingBlock::ANY_KBB_PATTERN_MASK   = (Type) ((((Type) 1) << (8 * (sizeof(Type) - 1))) << 6);
+const Type KnowledgeBuildingBlock::TYPED_KBB_PATTERN_MASK = (Type) ((((Type) 2) << (8 * (sizeof(Type) - 1))) << 6);
+const Type KnowledgeBuildingBlock::KBB_PATTERN_TYPE_MASK  = (Type) (~((((Type) 3) << (8 * (sizeof(Type) - 1))) << 6));
 
 KnowledgeBuildingBlock::KnowledgeBuildingBlock() 
 {
@@ -76,93 +74,83 @@ bool KnowledgeBuildingBlock::recursiveMatches(unsigned int cursor,
 //printf("Cursor: %u\n", cursor);
 //printf("Handle: %s", handle->to_string().c_str());
 
-    if (t == ANY_KBB) {
-        // ANY_KBB is a wildcard that matches any subgraph
+    if ((t & ANY_KBB_PATTERN_MASK) > 0) {
+        // it's a wildcard that matches any subgraph
         return true;
     } else {
-        Arity a = definition[cursor].arity;
-        Arity ha = (handle->is_link() ? LinkCast(handle)->get_arity() : 0);
-        if (t == ANY_TYPE) {
-            // ANY_TYPE matches any atom type but requires a match in
-            // arity as well. So either Handle's arity is a wildcard or it's
-            // equal to pattern's toplevel arity
-            return (a == ANY_ARITY) || (a == ha);
+        Type ht = handle->get_type();
+//printf("ht: %u\n", ht);
+//printf("t: %u\n", t);
+//printf("t & PATTERN MASK: %u\n", (t & TYPED_KBB_PATTERN_MASK));
+//printf("t & TYPE MASK: %u\n", (t & KBB_PATTERN_TYPE_MASK));
+        if (((t & KBB_PATTERN_TYPE_MASK) == ht) &&
+            ((t & TYPED_KBB_PATTERN_MASK) > 0)) {
+            // it's a "typed" wildcard. Matches any subgraph whose
+            // toplevel atom matches the given type (if type is a link, its
+            // outgoing doesn't matter, if it's a node its name doesn't matter)
+            return true;
         } else {
-            // If reached here then pattern's toplevel type is not
-            // a wildcard.
-            Type ht = handle->get_type();
-            if (t != ht) {
-                // Handle's type if different from pattern's toplevel type.
-                // It's a mismatch
-                return false;
-            } else {
-                if (a == ANY_ARITY) {
-                    // pattern's toplevel arity is a wildcard so it's a match.
-                    return true;
-                } else {
-                    // If reached here so neither type nor arity are wildcards.
-                    // Type have already been checked (and it passed) so check
-                    // if for arity.
-                    if (a != ha) return false; // mismatch
-                    if (a == 0) {
-                        // Handle is a Node. Use hashcode to check match.
-                        hash.reset();
-                        hash.feed(ht);
-                        hash.feed(NodeCast(handle)->get_name());
+            // If reached here then pattern's toplevel is not a wildcard.
+            Arity a = definition[cursor].arity;
+            Arity ha = (handle->is_link() ? LinkCast(handle)->get_arity() : 0);
+            if ((t != ht) || (a != ha)) return false; // mismatch
+            if (a == 0) {
+                // Handle is a Node. Use hashcode to check match.
+                hash.reset();
+                hash.feed(ht);
+                hash.feed(NodeCast(handle)->get_name());
 //printf("%u %lu %s\n", ht, ha, NodeCast(handle)->get_name().c_str());
 //printf("%lu %lu\n", definition[cursor].atomHash, hash.get());
 //printf("%s\n", (definition[cursor].atomHash == hash.get()) ? "true" : "false");
-                        return (definition[cursor].atomHash == hash.get());
-                    } else {
-                        // Handle is a Link.
-                        if (nameserver().isA(t, UNORDERED_LINK)) {
-                            // It's an UNORDERED_LINK so any choice of Handle's
-                            // outgoing set to pattern's outgoing set that
-                            // matches are OK. For example, if Handle's outgoing
-                            // is (a, b) and pattern's outgoing is (x, y),
-                            // so we may have either:
-                            //
-                            // (1) a matches x, AND b matches y
-                            // (2) a matches y AND b matches x
-                            //
-                            // So if (1) or (2) passes, it's a match! If none
-                            // passes, it's a mismatch.
-                            CartesianProductGenerator cp(a, a, true);
-                            while (! cp.depleted()) {
+                return (definition[cursor].atomHash == hash.get());
+            } else {
+                // Handle is a Link.
+                if (nameserver().isA(t, UNORDERED_LINK)) {
+                    // It's an UNORDERED_LINK so any choice of Handle's
+                    // outgoing set to pattern's outgoing set that
+                    // matches are OK. For example, if Handle's outgoing
+                    // is (a, b) and pattern's outgoing is (x, y),
+                    // so we may have either:
+                    //
+                    // (1) a matches x, AND b matches y
+                    // (2) a matches y AND b matches x
+                    //
+                    // So if (1) or (2) passes, it's a match! If none
+                    // passes, it's a mismatch.
+                    CartesianProductGenerator cp(a, a, true);
+                    while (! cp.depleted()) {
 //cp.printForDebug("cp: ", "\n");
-                                bool flag = true;
-                                for (unsigned int i = 0; i < a; i++) {
-                                    unsigned int targetCursor = cursor + 1;
-                                    for (unsigned int j = 0; j < i; j++) {
-                                        targetCursor = targetCursor + definition[targetCursor].arity + 1;
-                                    }
-                                    if (! recursiveMatches(targetCursor, 
-                                                           LinkCast(handle)->getOutgoingAtom(cp.at(i)))) {
-                                        flag = false;
-                                        break;
-                                    }
-                                }
-                                if (flag) {
-                                    //printf("Matched handle: %s", handle->to_string().c_str());
-                                    return true;
-                                }
-                                cp.next();
+                        bool flag = true;
+                        for (unsigned int i = 0; i < a; i++) {
+                            unsigned int targetCursor = cursor + 1;
+                            for (unsigned int j = 0; j < i; j++) {
+                                targetCursor = targetCursor + definition[targetCursor].arity + 1;
                             }
-//printf("Don't matched handle: %s", handle->to_string().c_str());
-                            return false;
-                        } else {
-                            // It's an ORDERED_LINK so each handle in outgoing
-                            // set must match.
-                            unsigned int nextTarget = cursor + 1;
-                            for (unsigned int i = 0; i < a; i++) {
-                                if (! recursiveMatches(nextTarget, LinkCast(handle)->getOutgoingAtom(i))) {
-                                    return false;
-                                }
-                                nextTarget = nextTarget + definition[nextTarget].arity + 1;
+                            if (! recursiveMatches(targetCursor, 
+                                                   LinkCast(handle)->getOutgoingAtom(cp.at(i)))) {
+                                flag = false;
+                                break;
                             }
+                        }
+                        if (flag) {
+                            //printf("Matched handle: %s", handle->to_string().c_str());
                             return true;
                         }
+                        cp.next();
                     }
+//printf("Don't matched handle: %s", handle->to_string().c_str());
+                    return false;
+                } else {
+                    // It's an ORDERED_LINK so each handle in outgoing
+                    // set must match.
+                    unsigned int nextTarget = cursor + 1;
+                    for (unsigned int i = 0; i < a; i++) {
+                        if (! recursiveMatches(nextTarget, LinkCast(handle)->getOutgoingAtom(i))) {
+                            return false;
+                        }
+                        nextTarget = nextTarget + definition[nextTarget].arity + 1;
+                    }
+                    return true;
                 }
             }
         }

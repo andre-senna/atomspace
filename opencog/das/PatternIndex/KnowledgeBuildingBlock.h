@@ -53,11 +53,7 @@ private:
         KBB_HASHCODE atomHash;
     } KBBElement;
 
-    static const Type ANY_KBB;
-    static const Type ANY_TYPE;
-    static const Arity ANY_ARITY;
     std::vector<KBBElement> definition;
-
 
     int countTargets(const std::string &txt, unsigned int begin);
     int recursiveParse(const std::string &txt,
@@ -70,6 +66,10 @@ public:
 
     KnowledgeBuildingBlock();
     ~KnowledgeBuildingBlock();
+
+    static const Type ANY_KBB_PATTERN_MASK;
+    static const Type TYPED_KBB_PATTERN_MASK;
+    static const Type KBB_PATTERN_TYPE_MASK;
 
     inline unsigned short int size() const { return definition.size(); }
     inline void clear() { definition.clear(); }
