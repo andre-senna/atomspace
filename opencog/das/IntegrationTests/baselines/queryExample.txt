@@ -37,7 +37,7 @@ Indexed KBB: (32 2 475574436) (18 0 18243391) (18 0 236997344)
 (InheritanceLink (ConceptNode "ent") (ConceptNode "plant"))
 Indexed KBB: (32 2 256617217) (18 0 1400528) (18 0 236997344) 
 Query 0:
-Pattern: (35 2 475671050) (18 0 237087367) (18 0 18243391) 
+Pattern: (35 2 475671050) (18 0 18243391) (18 0 237087367) 
 1 matches
 (SimilarityLink
   (ConceptNode "vine") ; [3117038143073657422][1]
@@ -53,23 +53,299 @@ Pattern: (35 2 475671050) (18 0 18243391) (18 0 237087367)
 ) ; [11106829400790239649][1]
 
 Query 2:
-Pattern: (35 2 238619820) (18 0 237087367) (50 0 8681) 
-0 matches
+Pattern: (35 2 238941128) (32786 0 33397) (18 0 237087367) 
+2 matches
+(SimilarityLink
+  (ConceptNode "earthworm") ; [6407449931513694624][1]
+  (ConceptNode "snake") ; [7407805379537570910][1]
+) ; [10123322360353422003][1]
+
+(SimilarityLink
+  (ConceptNode "vine") ; [3117038143073657422][1]
+  (ConceptNode "snake") ; [7407805379537570910][1]
+) ; [11106829400790239649][1]
+
 Query 3:
-Pattern: (35 2 238619820) (50 0 8681) (18 0 237087367) 
+Pattern: (35 2 238941141) (32787 0 33398) (18 0 237087367) 
 0 matches
 Query 4:
-Pattern: (32 2 3081089340) (50 0 8681) (18 0 3079563478) 
-0 matches
+Pattern: (35 2 238727902) (16384 0 16995) (18 0 237087367) 
+2 matches
+(SimilarityLink
+  (ConceptNode "earthworm") ; [6407449931513694624][1]
+  (ConceptNode "snake") ; [7407805379537570910][1]
+) ; [10123322360353422003][1]
+
+(SimilarityLink
+  (ConceptNode "vine") ; [3117038143073657422][1]
+  (ConceptNode "snake") ; [7407805379537570910][1]
+) ; [11106829400790239649][1]
+
 Query 5:
-Pattern: (32 2 40035746904) (18 0 3079563478) (50 0 8681) 
-0 matches
+Pattern: (35 2 19883926) (16384 0 16995) (18 0 18243391) 
+1 matches
+(SimilarityLink
+  (ConceptNode "vine") ; [3117038143073657422][1]
+  (ConceptNode "snake") ; [7407805379537570910][1]
+) ; [11106829400790239649][1]
+
 Query 6:
-Pattern: (35 2 1541135) (50 0 8681) (50 0 8682) 
-0 matches
+Pattern: (35 2 238727902) (16384 0 16995) (18 0 237087367) 
+2 matches
+(SimilarityLink
+  (ConceptNode "earthworm") ; [6407449931513694624][1]
+  (ConceptNode "snake") ; [7407805379537570910][1]
+) ; [10123322360353422003][1]
+
+(SimilarityLink
+  (ConceptNode "vine") ; [3117038143073657422][1]
+  (ConceptNode "snake") ; [7407805379537570910][1]
+) ; [11106829400790239649][1]
+
 Query 7:
-Pattern: (32 2 1534544) (50 0 8681) (50 0 8682) 
-0 matches
+Pattern: (35 2 19883926) (16384 0 16995) (18 0 18243391) 
+1 matches
+(SimilarityLink
+  (ConceptNode "vine") ; [3117038143073657422][1]
+  (ConceptNode "snake") ; [7407805379537570910][1]
+) ; [11106829400790239649][1]
+
 Query 8:
-Pattern: (40 2 23006489) (35 2 1541135) (50 0 8681) (50 0 8682) (35 2 1541149) (50 0 8682) (50 0 8683) 
+Pattern: (32 2 3081197422) (16384 0 16995) (18 0 3079563478) 
+4 matches
+(InheritanceLink
+  (ConceptNode "chimp") ; [7399667664088774877][1]
+  (ConceptNode "mammal") ; [8430621413625199043][1]
+) ; [9854620413606632416][1]
+
+(InheritanceLink
+  (ConceptNode "human") ; [7041155420050985198][1]
+  (ConceptNode "mammal") ; [8430621413625199043][1]
+) ; [11378688702833809713][1]
+
+(InheritanceLink
+  (ConceptNode "monkey") ; [1924803871767433450][1]
+  (ConceptNode "mammal") ; [8430621413625199043][1]
+) ; [14886048662141908013][1]
+
+(InheritanceLink
+  (ConceptNode "rhino") ; [7095446394205363458][1]
+  (ConceptNode "mammal") ; [8430621413625199043][1]
+) ; [16774434947460032069][1]
+
+Query 9:
+Pattern: (32 2 40035755218) (18 0 3079563478) (16384 0 16995) 
+1 matches
+(InheritanceLink
+  (ConceptNode "mammal") ; [8430621413625199043][1]
+  (ConceptNode "animal") ; [4997541822935110438][1]
+) ; [18243795018432612809][1]
+
+Query 10:
+Pattern: (35 2 1657530) (16384 0 16995) (16384 0 16995) 
+7 matches
+(SimilarityLink
+  (ConceptNode "earthworm") ; [6407449931513694624][1]
+  (ConceptNode "snake") ; [7407805379537570910][1]
+) ; [10123322360353422003][1]
+
+(SimilarityLink
+  (ConceptNode "monkey") ; [1924803871767433450][1]
+  (ConceptNode "chimp") ; [7399667664088774877][1]
+) ; [10409442637616779228][1]
+
+(SimilarityLink
+  (ConceptNode "ent") ; [5697884917184222643][1]
+  (ConceptNode "human") ; [7041155420050985198][1]
+) ; [11095610798683674390][1]
+
+(SimilarityLink
+  (ConceptNode "vine") ; [3117038143073657422][1]
+  (ConceptNode "snake") ; [7407805379537570910][1]
+) ; [11106829400790239649][1]
+
+(SimilarityLink
+  (ConceptNode "triceratops") ; [4982707034397138316][1]
+  (ConceptNode "rhino") ; [7095446394205363458][1]
+) ; [15547159860291623171][1]
+
+(SimilarityLink
+  (ConceptNode "human") ; [7041155420050985198][1]
+  (ConceptNode "chimp") ; [7399667664088774877][1]
+) ; [16352040921010318304][1]
+
+(SimilarityLink
+  (ConceptNode "monkey") ; [1924803871767433450][1]
+  (ConceptNode "human") ; [7041155420050985198][1]
+) ; [17600270701845741645][1]
+
+Query 11:
+Pattern: (32 2 1650939) (16384 0 16995) (16384 0 16995) 
+12 matches
+(InheritanceLink
+  (ConceptNode "snake") ; [7407805379537570910][1]
+  (ConceptNode "reptile") ; [8962333418120516329][1]
+) ; [9356979060420460295][1]
+
+(InheritanceLink
+  (ConceptNode "reptile") ; [8962333418120516329][1]
+  (ConceptNode "animal") ; [4997541822935110438][1]
+) ; [9574800146960892527][1]
+
+(InheritanceLink
+  (ConceptNode "chimp") ; [7399667664088774877][1]
+  (ConceptNode "mammal") ; [8430621413625199043][1]
+) ; [9854620413606632416][1]
+
+(InheritanceLink
+  (ConceptNode "dinosaur") ; [1243167921787492235][1]
+  (ConceptNode "reptile") ; [8962333418120516329][1]
+) ; [10377618063558368692][1]
+
+(InheritanceLink
+  (ConceptNode "earthworm") ; [6407449931513694624][1]
+  (ConceptNode "animal") ; [4997541822935110438][1]
+) ; [11337722948126007782][1]
+
+(InheritanceLink
+  (ConceptNode "human") ; [7041155420050985198][1]
+  (ConceptNode "mammal") ; [8430621413625199043][1]
+) ; [11378688702833809713][1]
+
+(InheritanceLink
+  (ConceptNode "ent") ; [5697884917184222643][1]
+  (ConceptNode "plant") ; [6116358545013404670][1]
+) ; [12818915068799709201][1]
+
+(InheritanceLink
+  (ConceptNode "monkey") ; [1924803871767433450][1]
+  (ConceptNode "mammal") ; [8430621413625199043][1]
+) ; [14886048662141908013][1]
+
+(InheritanceLink
+  (ConceptNode "vine") ; [3117038143073657422][1]
+  (ConceptNode "plant") ; [6116358545013404670][1]
+) ; [15504056683866021740][1]
+
+(InheritanceLink
+  (ConceptNode "triceratops") ; [4982707034397138316][1]
+  (ConceptNode "dinosaur") ; [1243167921787492235][1]
+) ; [15661149622190972439][1]
+
+(InheritanceLink
+  (ConceptNode "rhino") ; [7095446394205363458][1]
+  (ConceptNode "mammal") ; [8430621413625199043][1]
+) ; [16774434947460032069][1]
+
+(InheritanceLink
+  (ConceptNode "mammal") ; [8430621413625199043][1]
+  (ConceptNode "animal") ; [4997541822935110438][1]
+) ; [18243795018432612809][1]
+
+Query 12:
+Pattern: (35 2 1673932) (16384 0 16995) (32786 0 33397) 
+7 matches
+(SimilarityLink
+  (ConceptNode "earthworm") ; [6407449931513694624][1]
+  (ConceptNode "snake") ; [7407805379537570910][1]
+) ; [10123322360353422003][1]
+
+(SimilarityLink
+  (ConceptNode "monkey") ; [1924803871767433450][1]
+  (ConceptNode "chimp") ; [7399667664088774877][1]
+) ; [10409442637616779228][1]
+
+(SimilarityLink
+  (ConceptNode "ent") ; [5697884917184222643][1]
+  (ConceptNode "human") ; [7041155420050985198][1]
+) ; [11095610798683674390][1]
+
+(SimilarityLink
+  (ConceptNode "vine") ; [3117038143073657422][1]
+  (ConceptNode "snake") ; [7407805379537570910][1]
+) ; [11106829400790239649][1]
+
+(SimilarityLink
+  (ConceptNode "triceratops") ; [4982707034397138316][1]
+  (ConceptNode "rhino") ; [7095446394205363458][1]
+) ; [15547159860291623171][1]
+
+(SimilarityLink
+  (ConceptNode "human") ; [7041155420050985198][1]
+  (ConceptNode "chimp") ; [7399667664088774877][1]
+) ; [16352040921010318304][1]
+
+(SimilarityLink
+  (ConceptNode "monkey") ; [1924803871767433450][1]
+  (ConceptNode "human") ; [7041155420050985198][1]
+) ; [17600270701845741645][1]
+
+Query 13:
+Pattern: (32 2 1864178) (32787 0 33398) (16384 0 16995) 
+0 matches
+Query 14:
+Pattern: (32800 0 33411) 
+12 matches
+(InheritanceLink
+  (ConceptNode "snake") ; [7407805379537570910][1]
+  (ConceptNode "reptile") ; [8962333418120516329][1]
+) ; [9356979060420460295][1]
+
+(InheritanceLink
+  (ConceptNode "reptile") ; [8962333418120516329][1]
+  (ConceptNode "animal") ; [4997541822935110438][1]
+) ; [9574800146960892527][1]
+
+(InheritanceLink
+  (ConceptNode "chimp") ; [7399667664088774877][1]
+  (ConceptNode "mammal") ; [8430621413625199043][1]
+) ; [9854620413606632416][1]
+
+(InheritanceLink
+  (ConceptNode "dinosaur") ; [1243167921787492235][1]
+  (ConceptNode "reptile") ; [8962333418120516329][1]
+) ; [10377618063558368692][1]
+
+(InheritanceLink
+  (ConceptNode "earthworm") ; [6407449931513694624][1]
+  (ConceptNode "animal") ; [4997541822935110438][1]
+) ; [11337722948126007782][1]
+
+(InheritanceLink
+  (ConceptNode "human") ; [7041155420050985198][1]
+  (ConceptNode "mammal") ; [8430621413625199043][1]
+) ; [11378688702833809713][1]
+
+(InheritanceLink
+  (ConceptNode "ent") ; [5697884917184222643][1]
+  (ConceptNode "plant") ; [6116358545013404670][1]
+) ; [12818915068799709201][1]
+
+(InheritanceLink
+  (ConceptNode "monkey") ; [1924803871767433450][1]
+  (ConceptNode "mammal") ; [8430621413625199043][1]
+) ; [14886048662141908013][1]
+
+(InheritanceLink
+  (ConceptNode "vine") ; [3117038143073657422][1]
+  (ConceptNode "plant") ; [6116358545013404670][1]
+) ; [15504056683866021740][1]
+
+(InheritanceLink
+  (ConceptNode "triceratops") ; [4982707034397138316][1]
+  (ConceptNode "dinosaur") ; [1243167921787492235][1]
+) ; [15661149622190972439][1]
+
+(InheritanceLink
+  (ConceptNode "rhino") ; [7095446394205363458][1]
+  (ConceptNode "mammal") ; [8430621413625199043][1]
+) ; [16774434947460032069][1]
+
+(InheritanceLink
+  (ConceptNode "mammal") ; [8430621413625199043][1]
+  (ConceptNode "animal") ; [4997541822935110438][1]
+) ; [18243795018432612809][1]
+
+Query 15:
+Pattern: (35 3 21567082) (16384 0 16995) (16384 0 16995) (16384 0 16995) 
 0 matches

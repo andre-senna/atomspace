@@ -61,7 +61,15 @@ int main(int argc, char *argv[]) {
                             (ConceptNode \"snake\")\
                          )";
     queryStr[count++] = "(SimilarityLink\
+                            (*)\
+                            (ConceptNode \"vine\")\
+                         )";
+    queryStr[count++] = "(SimilarityLink\
                             (ConceptNode \"snake\")\
+                            (*)\
+                         )";
+    queryStr[count++] = "(SimilarityLink\
+                            (ConceptNode \"vine\")\
                             (*)\
                          )";
     queryStr[count++] = "(InheritanceLink\
@@ -80,6 +88,20 @@ int main(int argc, char *argv[]) {
                             (*)\
                             (*)\
                          )";
+    queryStr[count++] = "(SimilarityLink\
+                            (ConceptNode *)\
+                            (*)\
+                         )";
+    queryStr[count++] = "(InheritanceLink\
+                            (NumberNode *)\
+                            (*)\
+                         )";
+    queryStr[count++] = "(InheritanceLink *)";
+    queryStr[count++] = "(SimilarityLink (*) (*) (*))";
+
+    // TODO: add testcases for ListLink
+      
+    /*
     queryStr[count++] = "(AndLink\
                            (SimilarityLink\
                              (VariableNode \"X\")\
@@ -90,6 +112,7 @@ int main(int argc, char *argv[]) {
                              (VariableNode \"Z\")\
                            )\
                          )";
+    */
 
     KnowledgeBuildingBlock pattern;
     list<Handle> queryAnswer;

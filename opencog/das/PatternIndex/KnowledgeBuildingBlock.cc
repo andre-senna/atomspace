@@ -15,6 +15,11 @@ KnowledgeBuildingBlock::KnowledgeBuildingBlock()
 {
 }
 
+KnowledgeBuildingBlock::KnowledgeBuildingBlock(const KnowledgeBuildingBlock &other)
+{
+    pushBack(other);
+}
+
 KnowledgeBuildingBlock::~KnowledgeBuildingBlock() 
 {
     definition.clear();
@@ -41,10 +46,29 @@ void KnowledgeBuildingBlock::pushBack(Type type, Arity arity, KBB_HASHCODE atomH
     definition.push_back(newElement);
 }
 
+void KnowledgeBuildingBlock::replaceLast(Type type, Arity arity, KBB_HASHCODE atomHash)
+{
+    definition.back() = {type, arity, atomHash};
+}
+
 void KnowledgeBuildingBlock::pushBack(const KnowledgeBuildingBlock &kbb)
 {
     for (const KBBElement &elem : kbb.definition) {
         pushBack(elem.type, elem.arity, elem.atomHash);
+    }
+}
+
+void KnowledgeBuildingBlock::pushBack(const KnowledgeBuildingBlock &kbb, unsigned int n)
+{
+    pushBack(definition[n].type, definition[n].arity, definition[n].atomHash);
+}
+
+void KnowledgeBuildingBlock::pushBackAtom(const KnowledgeBuildingBlock &kbb, unsigned int cursor)
+{
+    unsigned int remaining = 1;
+    while (remaining > 0) {
+        definition.push_back(kbb.definition[cursor]);
+        remaining = remaining - 1 + kbb.definition[cursor++].arity;
     }
 }
 

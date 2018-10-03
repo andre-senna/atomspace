@@ -100,7 +100,8 @@ void AtomeseParser::addNewLink()
         //if (DEBUG) nextCurrentKBB->printForDebug("nextCurrentKBB: ", "\n");
         Type currentLinkType = typeStack.back();
         typeStack.pop_back();
-        if (nameserver().isA(currentLinkType, UNORDERED_LINK)) {
+        bool unorderedFlag = nameserver().isA(currentLinkType, UNORDERED_LINK);
+        if (unorderedFlag) {
             std::sort(targetHashValuesStack.back().begin(), targetHashValuesStack.back().end());
         }
         CompoundHashValue h;
@@ -114,6 +115,23 @@ void AtomeseParser::addNewLink()
             targetHashValuesStack.back().push_back(h.get());
         }
         currentKBB->pushFront(currentLinkType, currentArity, h.get());
+        if (unorderedFlag) {
+            unsigned int pos1 = 1;
+            unsigned int pos2 = currentKBB->definition[pos1].arity + 2; // pos1 + currentKBB->definition[pos1].arity + 1
+            if (currentKBB->definition[pos1].atomHash > currentKBB->definition[pos2].atomHash) {
+                // switch x and y in definition = sssssssssxxxyyyyyyyssssssssssssssssss
+                unsigned int cursor1 = pos1;
+                unsigned int cursor2 = pos2;
+                KnowledgeBuildingBlock::KBBElement aux;
+                while (cursor1 < pos2) {
+                    aux = currentKBB->definition[cursor1];
+                    currentKBB->definition[cursor1] = currentKBB->definition[cursor2];
+                    currentKBB->definition[cursor2] = aux;
+                    cursor1++;
+                    cursor2++;
+                }
+            }
+        }
         if (DEBUG) printf("Link hash value = %lu\n", hashValue.get());
         //if (DEBUG) currentKBB->printForDebug("currentKBB: ", "\n");
         nextCurrentKBB->pushBack(currentKBB);

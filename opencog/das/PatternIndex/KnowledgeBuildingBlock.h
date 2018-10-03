@@ -38,8 +38,10 @@ namespace opencog
 class KnowledgeBuildingBlock 
 {
 
+// TODO: uncomment friend and select "package" methods/variables
 // uses "package" visible methods (see below)
-//friend class PatternIndexImplementationRAM;
+friend class PatternIndexImplementationRAM;
+friend class AtomeseParser;
 //friend class PatternIndexSCMBuilder;
 //friend class ::PatternIndexImplementationRAMUTest;
 
@@ -65,6 +67,7 @@ private:
 public:
 
     KnowledgeBuildingBlock();
+    KnowledgeBuildingBlock(const KnowledgeBuildingBlock &other);
     ~KnowledgeBuildingBlock();
 
     static const Type ANY_KBB_PATTERN_MASK;
@@ -82,6 +85,7 @@ public:
     // TODO:
     // the following methods should be accesed only by "friend" classes 
 
+    // TODO: replace by {T, A} get()
     inline Type getTypeAt(unsigned short int pos) const
     {
         return definition[pos].type;
@@ -95,9 +99,13 @@ public:
         return definition[pos].atomHash;
     }
     void pushBack(const KnowledgeBuildingBlock &kbb);
+    void pushBack(const KnowledgeBuildingBlock &kbb, unsigned int n);
+    void pushBackAtom(const KnowledgeBuildingBlock &kbb, unsigned int n);
     void pushBack(KnowledgeBuildingBlock *kbb);
     void pushBack(Type type, Arity arity, KBB_HASHCODE atomHash = 0);
     void pushFront(Type type, Arity arity, KBB_HASHCODE atomHash = 0);
+    void replaceLast(Type type, Arity arity, KBB_HASHCODE atomHash = 0);
+
 };
 
 }
